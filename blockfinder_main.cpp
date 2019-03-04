@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         string block_filename = "NC2_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.txt";
         //blocks_file.open(block_filename, fstream::out);
 
-        blocks_file.open(block_filename);
+        //blocks_file.open(block_filename);
         clock_t start = clock();
 
 
@@ -63,7 +63,9 @@ int main(int argc, char *argv[]) {
 			b_test.recoverfromcounters(t.counter_start);
 			b_test.maincycle1(t.counter_start, t.counter_end);
 
-			block_filename = "NCD_"+to_string(numbertask)+"_cpp.txt";
+			ostringstream block_ofilename;
+			block_ofilename<< "NCD_"<<setw(3)<<setfill('0')<<numbertask<<"_cpp.elb";
+                        block_filename = block_ofilename.str();
 
 			blocks_file.open(block_filename);
 			blocks_file << b_test.result_string;
@@ -147,7 +149,7 @@ int main(int argc, char *argv[]) {
 
 		cout << " Q" << endl;
 		fstream blocks_file;
-		string block_filename = "NC2_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
+		//string block_filename = "NC2_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
 		//blocks_file.open(block_filename, fstream::out);
 		clock_t start = clock();
 
