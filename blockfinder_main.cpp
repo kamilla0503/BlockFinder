@@ -47,16 +47,16 @@ int main(int argc, char *argv[]) {
 
 
 
-
+b.find_schemes1();
 		//vector <Task4run> t;
-		b.create_tasks();
+		//b.create_tasks();
 
 
 
         cout << endl;
         int numbertask=0;
 
-
+/**
 		for (Task4run t : b.tasks){
 
 			BlockFinder b_test(samples, test_nc2, min_depth, true, -1);
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 			numbertask=numbertask+1;
 
 		}
-
+**/
 
 
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
 
 
-        //blocks_file << b.result_string;
+        blocks_file << b.result_string;
         blocks_file << endl;
 
 
