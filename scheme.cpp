@@ -1,5 +1,5 @@
 #include"scheme.h"
-
+//#include<algorithm>
 
 bool operator<(const Scheme& t1, const Scheme& t2) {
 	return (t1.simplified < t2.simplified);
@@ -13,13 +13,18 @@ bool operator==(const Scheme& t1, const Scheme& s2) {
 	return (t1.simplified == s2.simplified);
 }
 
-bool Scheme::check_codes() {
-	set <string> codes;
-	string code; 
+Scheme::Scheme() {
+	patterns={};
+}
+
+bool Scheme::check_codes(PatternsCodes &patternscode) {
+	set <int> codes;
+	int code;
 	bool first = true;
-	for (string pattern_1 : patterns) {
-		for (string pattern_2 : patterns) {
-			code = ncs.calc_code(pattern_1, pattern_2);
+
+	for (int i: patterns) {
+		for ( int j : patterns) {
+			code =  patternscode.codes[ patternscode.patterns.size()*i  +j]; //!!!
 			if (first) {
 				first = false;
 				continue;
@@ -36,24 +41,27 @@ bool Scheme::check_codes() {
 }
 
 
-void Scheme::setscheme(string sname, NCS sncs, int  bsamples, vector <string>  bpatterns) {
+void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
 	patterns = bpatterns;
 	samples = bsamples;
 	ncs = sncs;
+
 	set <string> codes; 
-	good = check_codes();
+	good = check_codes( patternscode  );
 	map <string, int> simplified;
-	simplify();
+	simplify(patternscode);
 	set <string> new_codes;
+	//code_table.setPatternsCodes(patterns, ncs);
+
 }
 
 
-void Scheme::simplify() {
+void Scheme::simplify(PatternsCodes &patternscode) {
 	string simple_pattern;
 	simplified = {};
-	for (string pattern : patterns) {
-		simple_pattern = simplify_pattern(pattern);
+	for (int pattern : patterns) {
+		simple_pattern = patternscode.simple_form[pattern];
 		if ((simplified.size() != 0) && (simplified.find(simple_pattern) != simplified.end())) {
 			simplified[simple_pattern] = simplified[simple_pattern] + 1;
 		}
@@ -63,15 +71,19 @@ void Scheme::simplify() {
 	}
 }
 
-Scheme::Scheme(string sname, NCS sncs, int  bsamples, vector <string>  bpatterns) {
+
+
+Scheme::Scheme(PatternsCodes &patternscode, string sname, NCS sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
 	patterns = bpatterns;
 	samples = bsamples;
 	ncs = sncs;
 	set <string> codes; //
-	good = check_codes();
-	simplify();
+	good = check_codes(patternscode);
+	simplify(patternscode);
 	set <string> new_codes;
+	//code_table.setPatternsCodes(patterns, ncs);
+
 }
 bool Scheme::check_patterns(vector <string> patterns) {
 	if (patterns.size() == 0) {
@@ -92,7 +104,7 @@ bool Scheme::check_patterns(vector <string> patterns) {
 	return true;
 }
 
-void Scheme::sort() {  
+/**void Scheme::sort() {
 	string temp_pattern;
 	for (int i = 0; i < (patterns.size() - 1); i++) {
 		for (int j = 0; j < (patterns.size() - i - 1); j++) {
@@ -103,39 +115,54 @@ void Scheme::sort() {
 			}
 		}
 	}
+}**/
+
+void Scheme::sort(){
+
+	std::sort(patterns.begin(), patterns.end());
+
 }
 
-void Scheme::add_new_codes(string new_pattern) {
-	for (string pattern : patterns) {
-		codes.insert(ncs.calc_code(pattern, new_pattern));
-		codes.insert(ncs.calc_code(new_pattern, pattern));
+void Scheme::add_new_codes(int new_pattern, PatternsCodes &patternscode) {
+	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
+	int m=patternscode.patterns.size();
+	int n=new_pattern;
+	//for ( int i =0; i<patterns.size(); i++) {
+	for ( int i :patterns) {
+		codes.insert(patternscode.codes[i*m+n]);
+		codes.insert(patternscode.codes[n*m+i]);
 	}
 
-	codes.insert(ncs.calc_code(new_pattern, new_pattern));
+	codes.insert(patternscode.codes[n*m+n]);
 
 }
 
-void Scheme::add_pattern(string new_pattern) {
+void Scheme::add_pattern(int new_pattern , PatternsCodes &patternscode) {
 	patterns.push_back(new_pattern);
-	add_new_codes(new_pattern);
-	simplify();
+	//patternscode.setPatternsCodes(patterns, ncs);
+	add_new_codes(new_pattern, patternscode);
+	simplify(patternscode);
 }
 
 
 
-bool Scheme::try_pattern(string  new_pattern) {
+bool Scheme::try_pattern(int  new_pattern, PatternsCodes &patternscode) {
 	if (good == false) {
 		return false;
 	}
-	set <string> new_codes;
-	string code_1, code_2;
+	set <int> new_codes;
+	int code_1, code_2;
 	if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
 		return false;
 	}
-	for (string pattern : patterns) {
+	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
+    int n = new_pattern;
+	int m = patternscode.patterns.size();
+	for (int i=0; i<patterns.size(); i++) {
+		//code_1 = patternscode.codes[patterns[i]*m+n];
 
-		code_1 = ncs.calc_code(pattern, new_pattern);
-		code_2 = ncs.calc_code(new_pattern, pattern);
+		code_1 = patternscode.codes[patterns[i]*m+n];
+		code_2 = patternscode.codes[n*m+patterns[i]];
 		
 		if (codes.find(code_1) != codes.end() || codes.find(code_2) != codes.end() || (code_2 == code_1) || new_codes.find(code_1) != new_codes.end() || new_codes.find(code_2) != new_codes.end()) {
 
@@ -147,7 +174,7 @@ bool Scheme::try_pattern(string  new_pattern) {
 		}
 
 	}
-	string self_code = ncs.calc_code(new_pattern, new_pattern);
+	int self_code = patternscode.codes[n*m+n];
 	if (codes.find(self_code) != codes.end() || new_codes.find(self_code) != new_codes.end()) {
 		return false;
 
@@ -158,6 +185,7 @@ bool Scheme::try_pattern(string  new_pattern) {
 	return true;
 }
 
+/**
 Scheme Scheme::direct_product(Scheme scheme) {
 	vector <string>  new_patterns;
 
@@ -171,14 +199,14 @@ Scheme Scheme::direct_product(Scheme scheme) {
 	Scheme new_scheme = Scheme(new_name, ncs, samples, new_patterns);
 	return new_scheme;
 }
+**/
 
-
-string Scheme::full_str() {
+string Scheme::full_str(PatternsCodes &patternscode) {
 	string s = "";
 	string all_p = "";
 
-	for (string i : patterns) {
-		all_p = all_p + i + "\n";
+	for (int i : patterns) {
+		all_p = all_p + patternscode.patterns[i] + "\n";
 	}
 	s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n" + all_p;
 	return s;
