@@ -2,6 +2,10 @@
 
 using namespace std; 
  
+spectrum::spectrum(const char & sname) { 
+	name = sname; 
+}
+
 spectrum::spectrum(string sname) { 
 	name = sname; 
 }
@@ -153,7 +157,7 @@ NCS& NCS::operator=(NCS& other){
 	return *this;
 }
 
-bool NCS::check_power(string new_pattern, int min_power) {
+bool NCS::check_power( string  new_pattern, int min_power) {
 	int power = 1; 
 	labeltype e; 
 	for (char label : new_pattern) {
