@@ -11,8 +11,9 @@
 #include<iomanip>
 #include<regex>
 #include<tuple>
-#include<time.h> 
-
+#include<time.h>
+#include<algorithm>
+#include<valarray>
 
 
 //#include<tr1>
@@ -80,12 +81,6 @@ public:
 	bool check_power(string new_pattern,int min_depth);
 };
 NCS get_NCS(string name);
-bool pattern_bigger(string pattern1, string  pattern2);
-string simplify_pattern(string pattern);
-map <string, int>  simplify_list_of_patterns(vector<string> list_of_patterns); 
-tuple<int, int > count_type_in_list_of_simplified(map <string, int> simplified, int index_of_type); 
-int index_of_type(labeltype label_type);
-tuple<int, int > count_type_in_list_of_patterns(vector<string>  patterns,labeltype label_type);
 
 #endif  // NCS_H_INCLUDED
 

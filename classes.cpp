@@ -2,16 +2,11 @@
 
 
 NCS get_NCS(string name) {
-	//NCS ncs;
-
-	cout << " start " << endl;
+	//NCS ncs; 
 	vector<spectrum> spectra;
 	vector<labeltype> ncslabeltype;
 
-	cout << name << "compare" << endl;
-
 	if (name == "NC2") {
-		cout << "get >" << endl;
 		ncslabeltype.push_back(labeltype('X', 0, 0, 0));
 		ncslabeltype.push_back(labeltype('N', 1, 0, 0));
 		ncslabeltype.push_back(labeltype('C', 0, 0, 1));
@@ -92,7 +87,7 @@ NCS get_NCS(string name) {
 		return ncs;
 	}
 	
-	else {
+	else{
 		ncslabeltype.push_back(labeltype('X', 0, 0, 0));
 		ncslabeltype.push_back(labeltype('N', 1, 0, 0));
 		ncslabeltype.push_back(labeltype('C', 0, 0, 1));
@@ -101,10 +96,7 @@ NCS get_NCS(string name) {
 		NCS ncs(name, spectra, ncslabeltype);
 		return ncs;
 
-
 	}
-
-
 
 
 	

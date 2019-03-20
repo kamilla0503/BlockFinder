@@ -1,26 +1,35 @@
 //#pragma once
 #include"ncs.h"
+#include "PatternCodes.h"
 class Scheme {
 public:
 	string name;
 	NCS ncs;
 	int samples;
-	vector <string> patterns;
-	set <string> codes;
+	vector <int> patterns;
+	set <int> codes;
 	set <string> new_codes;
 	map <string, int> simplified;
+
+	//PatternsCodes code_table;
+
 	bool good;
-	Scheme(string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <string>  bpatterns = {});
-	bool check_codes();
-	void simplify();
+	Scheme();
+	Scheme(PatternsCodes &patternscode, string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
+
+   // Scheme( string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
+
+	bool check_codes(PatternsCodes &patternscode);
+	void simplify( PatternsCodes &patternscode  );
 	bool check_patterns(vector <string> patterns);
 	void sort();
-	void add_new_codes(string new_pattern);
-	void add_pattern(string new_pattern);
-	bool try_pattern(string  new_pattern);
+	void add_new_codes(int new_pattern, PatternsCodes &patternscode);
+	void add_pattern(int new_pattern, PatternsCodes &patternscode);
+	bool try_pattern(int  new_pattern, PatternsCodes &patternscode);
 	Scheme direct_product(Scheme scheme);
-	string full_str();
-	void setscheme(string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <string>  bpatterns = {});
+	string full_str(PatternsCodes &patternscode);
+	void setscheme(PatternsCodes &patternscode, string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
+
 	bool operator<(const Scheme & t2);
 };
 bool operator==(const Scheme& s1, const Scheme& t2);
