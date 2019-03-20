@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
 		for (Task4run t : b.tasks){
 
-			BlockFinder b_test(samples, test_nc2, min_depth, true, -1);
+			BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			b_test.recoverfromcounters(t.counter_start, numbertask);
 			b_test.maincycle(t.counter_start, t.counter_end);
 

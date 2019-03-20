@@ -504,7 +504,7 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters, int numbert
 	ostringstream tmp;
 	tmp<<setw(4)<<setfill('0')<<numbertask;
 	result_ofstream.close();
-    results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)<<tmp.str()<<"_cpp.elb";
+    results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
     result_ofstream.open(results_filename);
 
 }
