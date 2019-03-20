@@ -7,6 +7,8 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	check_t_free = false; 
 	block_finder_mode = bblock_finder_mode;
 	depth = 0;  
+	results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
+	result_ofstream.open(results_filename);
 	min_t_free = bmin_t_free;
 	index_of_type_T = index_of_type(labeltype('T', 1, 1, 0));
 	if (min_t_free >= 0) {
@@ -37,8 +39,8 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 
 	begin = bbegin;
 	end = bend; 
-	result_string = "[NCS = " + ncs.name + "]\n"+
-	                "[Deuterated = " + (ncs.deuterated?"True":"False") + "]\n";
+	result_ofstream << "[NCS = " << ncs.name << "]"<<endl<<
+	                "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl<<fflush;
 	
 	out1 = "";
 	start_time = clock();
@@ -52,7 +54,7 @@ vector<string> BlockFinder::generate_patterns(int  bsamples, bool top ) {
 	if (bsamples == 0) {
 		new_set = {"" }; //previously "0"
 		return new_set;
-	}
+}
 	
 	current_set = generate_patterns(bsamples - 1, false);
 	//new_set = { };
@@ -480,7 +482,7 @@ void BlockFinder::create_tasks() {
 
 
 
-void BlockFinder::recoverfromcounters( vector <int> currentcounters){
+void BlockFinder::recoverfromcounters( vector <int> currentcounters, int numbertask){
 
 	vector<int> temp_patterns = patterns[0];
 	for (int c=0; c<currentcounters.size()-1; c++){
@@ -499,7 +501,14 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters){
 	depth = currentcounters.size()-1;
 	counter=currentcounters;
 
+	ostringstream tmp;
+	tmp<<setw(4)<<setfill('0')<<numbertask;
+	result_ofstream.close();
+    results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)<<tmp.str()<<"_cpp.elb";
+    result_ofstream.open(results_filename);
+
 }
+
 
 
 
@@ -523,7 +532,7 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters){
 void BlockFinder::next_iteration_output()
 {
     iterator++;
-    if (iterator % 10000 == 0) {
+    if (iterator % 100000 == 0) {
       ostringstream log;
       log<< "[BlockFinder" << to_string(samples) << "]";
       log<< setw(9) << iterator;
@@ -676,6 +685,6 @@ tuple<int, int > count_type_in_list_of_patterns(vector<int> patterns, labeltype 
 
 void  BlockFinder::write_result(Scheme  new_scheme) {
 	results_found = results_found + 1;
-        result_string += "# iterator = " + to_string(iterator) + "\n";
-	result_string += new_scheme.full_str(code_table); // codetable
+	result_ofstream << "# iterator = " + to_string(iterator) << endl;
+	result_ofstream << new_scheme.full_str(code_table)<<endl<<fflush;
 }

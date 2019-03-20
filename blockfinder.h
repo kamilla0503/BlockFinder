@@ -23,7 +23,8 @@ public:
 	int task_size=95;
     vector <Task4run> tasks;
 	bool check_t_free;
-	string result_string;
+	string results_filename;
+	ofstream result_ofstream;
 	int  min_t_free = -1;
 	vector <int> counter = {}; //temporary
 	vector <Scheme> back_up_schemes = {};
@@ -39,7 +40,7 @@ public:
 	vector <string> generate_patterns(int  samples, bool top = true);
 	void start_blockfinder();
 	void maincycle( vector <int> start={}, vector <int> end={}  );
-    void recoverfromcounters( vector <int> currentcounters);
+    void recoverfromcounters( vector <int> currentcounters, int numbertask = -1);
 
 
 
