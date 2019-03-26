@@ -3,8 +3,8 @@ CXX=g++
 RM=rm -f
 
 
-CPPFLAGS=-O3 -std=c++11 
-LDFLAGS=-O3 -std=c++11 
+CPPFLAGS=-O0 -g -std=c++11 -I.
+LDFLAGS=-O0 -g -std=c++11 -pthread
 LDLIBS=
 
 SRCS=ncs.cpp \
