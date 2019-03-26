@@ -12,7 +12,7 @@ public:
 	Scheme scheme;
 	int begin, end; 
 	//Scheme scheme("1", ncs, samples, {});
-    void create_tasks();
+    void create_tasks(  );
     //vector <string> patterns; //temporary
 	//new?
 	vector <vector <int>> patterns;
@@ -20,7 +20,7 @@ public:
 	int depth;
 	int max_depth;
 	int parallel_depth=2;
-	int task_size=95;
+	int task_size=150;
     vector <Task4run> tasks;
 	bool check_t_free;
 	string results_filename;
@@ -39,7 +39,7 @@ public:
 	//BlockFinder( NCS bncs, int bmin_depth, bool bblock_finder_mode, int  bmin_t_free = -1);
 	vector <string> generate_patterns(int  samples, bool top = true);
 	void start_blockfinder();
-	void maincycle( vector <int> start={}, vector <int> end={}  );
+	void maincycle( const vector <int> start , const vector <int> end   );
     void recoverfromcounters( vector <int> currentcounters, int numbertask = -1);
 
 
@@ -57,5 +57,26 @@ public:
 	void blockfinder_finished();
 	BlockFinder(int bsamples, NCS bncs, int bmin_depth, bool bblock_finder_mode, int bmin_t_free, int begin = -1, int  end = -1);
 	//bfm? 
+
+
 };
+
+
+
+
+void find_schemes (int id,   int bsamples, NCS bncs, int bmin_depth, bool bblock_finder_mode, int bmin_t_free, int numbertask, vector <int> counter_start = {}, vector <int> counter_end ={} );
+
+
+void find (const BlockFinder b);
+
+
+
+
+
+
+
+
+
+
+
 

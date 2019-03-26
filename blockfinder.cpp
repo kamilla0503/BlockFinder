@@ -47,6 +47,27 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 }
 
 
+void find_schemes ( int id,  int bsamples, NCS bncs, int bmin_depth, bool bblock_finder_mode, int bmin_t_free, int numbertask, vector <int> counter_start, vector <int> counter_end  ) {
+
+     BlockFinder b (bsamples, bncs, bmin_depth, true , -1  )   ;
+
+    b.recoverfromcounters(counter_start, numbertask);
+    b.maincycle(counter_start, counter_end);
+
+
+
+}
+
+/**
+void find (const BlockFinder b){
+    BlockFinder b_new();
+    b_new = b;
+
+
+
+
+}**/
+
 
 vector<string> BlockFinder::generate_patterns(int  bsamples, bool top ) {
 	vector <string> new_set;
@@ -123,7 +144,7 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters){
 
 }**/
 
-void BlockFinder::maincycle( vector <int> start, vector <int> end   ) {
+void BlockFinder::maincycle( const vector <int> start, const vector <int> end   ) {
 	vector<int> patternscurrent, next_patterns;
 	int start_point;
 	int patterns_left; 
@@ -565,11 +586,11 @@ void BlockFinder::check_max_depth() {
 
 } 
 
-vector <int> BlockFinder::get_next_patterns(vector <int> patterns, int patterns_left, int  start_point) {
+vector <int> BlockFinder::get_next_patterns(vector <int> patterns1, int patterns_left, int  start_point) {
 	vector <int> next_patterns ;
 	for (int i = 0; i < patterns_left; i++)  {
-		if( scheme.try_pattern(patterns[i + start_point], code_table)) {
-			next_patterns.push_back(patterns[i + start_point]);
+		if( scheme.try_pattern(patterns1[i + start_point], code_table)) {
+			next_patterns.push_back(patterns1[i + start_point]);
 		}
 	}
 	return next_patterns;
@@ -580,13 +601,13 @@ void BlockFinder::go_deeper(vector <int> next_patterns) {
 	counter.push_back(0);
 	depth = depth + 1;
 }
-
+/**
 void BlockFinder::find_schemes() {
 	start_blockfinder();
 	maincycle();
 	blockfinder_finished();
 }
-
+**/
 
 void BlockFinder:: blockfinder_finished() {
 	out1 = "[BlockFinder] finished search in" + to_string(samples) + "samples after " + to_string(iterator) + " iterations " + to_string(results_found) + " ELB schemes found";

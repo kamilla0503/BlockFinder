@@ -1,8 +1,11 @@
-#include<time.h> 
+#include<pthread.h>
+#include "ctpl.h"
+#include<time.h>
 #include<iomanip>
 #include<iostream>
 #include <sstream>
 #include"blockfinder.h"
+
 
 using namespace std;
 
@@ -48,14 +51,9 @@ int main(int argc, char *argv[]) {
         cout << " scheme size " << b.scheme.patterns.size() << endl;
        // cout << " q size " << q.codes.size() << endl;
 
-/**
-        for( vector<int> a : q.codes){
-            for (int b : a){
+        //ctpl::thread_pool p(4 /* two threads in the pool */);
 
-                cout << b<< " ";
-            }
-            cout << endl;
-        }**/
+
 
 
 		//ofstream blocks_file;
@@ -75,12 +73,16 @@ int main(int argc, char *argv[]) {
 
 		cout << endl;
 		int numbertask=0;
+	//	std::future<void> qw = p.push(find_schemes,
+        for (Task4run t : b.tasks){
+            cout << " numbertask : " << numbertask<< endl;
+			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
+			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-		for (Task4run t : b.tasks){
+			//p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
 
-			BlockFinder b_test(samples, ncs, min_depth, true, -1);
-			b_test.recoverfromcounters(t.counter_start, numbertask);
-			b_test.maincycle(t.counter_start, t.counter_end);
+
+			//b_test.maincycle(t.counter_start, t.counter_end);
 
             ostringstream block_ofilename;
             block_ofilename<< "NCD_"<<setw(3)<<setfill('0')<<numbertask<<"_cpp.elb";
