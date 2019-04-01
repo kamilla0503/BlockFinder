@@ -35,3 +35,6 @@ tasks.o: tasks.cpp tasks.h
 
 blockfinder: $(OBJS)
 	$(CXX) $(LDFLAGS) -o blockfinder $(OBJS) $(LDLIBS)
+
+clean:
+	rm -rf $(OBJS) blockfinder
