@@ -1,9 +1,9 @@
 //
-// Created by kamilla on 21.01.19.
+// Created by kamilla on 20.03.19.
 //
 
-#ifndef UNTITLED_TASK_H
-#define UNTITLED_TASK_H
+#ifndef FORWORK_TASKS_H
+#define FORWORK_TASKS_H
 
 #include <vector>
 class Task4run{
@@ -25,4 +25,5 @@ public:
 
 
 
-#endif //UNTITLED_TASK_H
+
+#endif //FORWORK_TASKS_H
