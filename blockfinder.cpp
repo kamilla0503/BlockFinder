@@ -333,7 +333,7 @@ void BlockFinder::create_tasks() {
     vector <Task4run> t;
     //Task4run task1({0}, {});
     Task4run task1;
-    task1.counter_start={0, 0, 0};
+    task1.counter_start={0};
     task1.counter_end={};
     tasks.push_back(task1);
 
@@ -347,7 +347,7 @@ void BlockFinder::create_tasks() {
 
 
     while (true) {
-        iterlog<<iterator<<" "<<depth<<" : ";
+        //iterlog<<iterator<<" "<<depth<<" : ";
         for(int d=0;d<depth+1; d++)
             iterlog<<counter[d]<<" ";
         iterlog<<endl;
@@ -595,6 +595,18 @@ vector <int> BlockFinder::get_next_patterns(vector <int> patterns1, int patterns
 	}
 	return next_patterns;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 void BlockFinder::go_deeper(vector <int> next_patterns) {
 	patterns.push_back(next_patterns);
