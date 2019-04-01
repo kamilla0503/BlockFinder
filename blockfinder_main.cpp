@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
         BlockFinder b_c(samples, ncs, min_depth, true, -1);
 
-        //b_c.counter= {17, 0, 0};
+        //blocks_file.open(block_filename);
 
 
        // b_c.find_schemes();
@@ -62,7 +62,6 @@ int main(int argc, char *argv[]) {
 		//string block_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.txt";
 		//blocks_file.open(block_filename, fstream::out);
 
-		//blocks_file.open(block_filename);
 		clock_t start = clock();
 
 		//b.find_schemes();
