@@ -40,7 +40,8 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	begin = bbegin;
 	end = bend; 
 	result_ofstream << "[NCS = " << ncs.name << "]"<<endl<<
-	                "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl<<fflush;
+	                "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
+	result_ofstream.flush();
 	
 	out1 = "";
 	start_time = clock();
@@ -528,7 +529,8 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters, int numbert
     results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
     result_ofstream.open(results_filename);
 
-    result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl<<fflush;
+    result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
+    result_ofstream.flush();
 
 
 
@@ -723,5 +725,6 @@ tuple<int, int > count_type_in_list_of_patterns(vector<int> patterns, labeltype 
 void  BlockFinder::write_result(Scheme  new_scheme) {
 	results_found = results_found + 1;
 	result_ofstream << "# iterator = " + to_string(iterator) << endl;
-	result_ofstream << new_scheme.full_str(code_table)<<endl<<fflush;
+	result_ofstream << new_scheme.full_str(code_table)<<endl;
+	result_ofstream.flush();
 }
