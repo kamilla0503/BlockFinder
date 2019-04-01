@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
         cout << " scheme size " << b.scheme.patterns.size() << endl;
        // cout << " q size " << q.codes.size() << endl;
 
-        //ctpl::thread_pool p(4 /* two threads in the pool */);
+        ctpl::thread_pool p(4 /* two threads in the pool */);
 
 
 
@@ -79,13 +79,13 @@ int main(int argc, char *argv[]) {
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-			//p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
+			p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
 
 
 			//b_test.maincycle(t.counter_start, t.counter_end);
 
             ostringstream block_ofilename;
-            block_ofilename<< "NCD_"<<setw(3)<<setfill('0')<<numbertask<<"_cpp.elb";
+            block_ofilename<< ncs.name <<setw(3)<<setfill('0')<<numbertask<<"_cpp.elb";
             //block_filename = block_ofilename.str();
 
             //blocks_file.open(block_filename);
