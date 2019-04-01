@@ -528,6 +528,10 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters, int numbert
     results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
     result_ofstream.open(results_filename);
 
+    result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl<<fflush;
+
+
+
 }
 
 
