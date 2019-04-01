@@ -16,7 +16,7 @@ public:
     //vector <string> patterns; //temporary
 	//new?
 	vector <vector <int>> patterns;
-	vector <string> patterns_listl;
+	vector <string> patterns_list;
 	int depth;
 	int max_depth;
 	int parallel_depth=2;

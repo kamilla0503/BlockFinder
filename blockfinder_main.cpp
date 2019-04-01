@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 
 		clock_t end = clock();
 
-       // taskfile.open("tasks.cpp");
+
 
 
         /**
@@ -125,6 +125,7 @@ int main(int argc, char *argv[]) {
 		printf("Solutions found: %d\n", b.results_found);
 		//cout << "Blocks found (" << b.results_found << ") are written to file " << block_filename << endl;
 		printf("The time: %f seconds\n", seconds);
+		printf("Average rate: %6.2f iter/sec\n", b.iterator/seconds);
 
 
 

@@ -18,10 +18,10 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 		min_depth = 2;
 	}
 
-	patterns_listl = generate_patterns(samples);
+	patterns_list = generate_patterns(samples);
 
 	patterns.push_back({});
-	for (int i =0; i<patterns_listl.size(); i++){
+	for (int i =0; i<patterns_list.size(); i++){
 	    patterns[0].push_back(i);
 	}
 
@@ -32,7 +32,7 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	iterator = 0;
 	//code_table.setPatternsCodes(patterns, ncs);
 
-	code_table.setPatternsCodes(patterns_listl, ncs, min_depth);
+	code_table.setPatternsCodes(patterns_list, ncs, min_depth);
 
 
 	scheme.setscheme(code_table,"1", ncs, samples, {});
