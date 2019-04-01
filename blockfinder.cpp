@@ -40,7 +40,7 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	begin = bbegin;
 	end = bend; 
 	result_ofstream << "[NCS = " << ncs.name << "]"<<endl<<
-	                "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl<<fflush;
+	                "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
 	
 	out1 = "";
 	start_time = clock();
@@ -404,5 +404,7 @@ tuple<int, int > count_type_in_list_of_patterns(vector<int> patterns, labeltype 
 inline void  BlockFinder::write_result(Scheme  new_scheme) {
 	results_found = results_found + 1;
 	result_ofstream << "# iterator = " + to_string(iterator) << endl;
-	result_ofstream << new_scheme.full_str(code_table)<<endl<<fflush;
+	string s =  new_scheme.full_str(code_table);
+
+	result_ofstream << s<<endl;
 }
