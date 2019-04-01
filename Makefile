@@ -2,8 +2,8 @@ CC=gcc
 CXX=g++
 RM=rm -f
 
-CPPFLAGS=-g 
-LDFLAGS=-g 
+CPPFLAGS=-O3
+LDFLAGS=-O3
 LDLIBS=
 
 SRCS=blockfinder.cpp blockfinder_main.cpp classes.cpp ncs.cpp scheme.cpp task.cpp
@@ -30,4 +30,4 @@ blockfinder: $(OBJS)
 #	./test_ncs
 
 clean:
-	$(RM) $(OBJS) test_ncs
+	$(RM) $(OBJS) blockfinder

@@ -256,7 +256,7 @@ void BlockFinder::maincycle() {
 	vector <Task4run> t;
 	//Task4run task1({0}, {});
 	Task4run task1;
-	task1.counter_start={0, 0, 0};
+	task1.counter_start={0};
 	task1.counter_end={};
 	tasks.push_back(task1);
 
