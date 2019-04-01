@@ -2,26 +2,36 @@ CC=gcc
 CXX=g++
 RM=rm -f
 
-CPPFLAGS=-g 
-LDFLAGS=-g 
+
+CPPFLAGS=-O3 -std=c++11 
+LDFLAGS=-O3 -std=c++11 
 LDLIBS=
 
-SRCS=blockfinder.cpp blockfinder_main.cpp classes.cpp ncs.cpp scheme.cpp task.cpp
+SRCS=ncs.cpp \
+     classes.cpp \
+     blockfinder.cpp \
+     scheme.cpp \
+     blockfinder_main.cpp \
+     PatternCodes.cpp \
+     tasks.cpp
+
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: blockfinder
 
-blockfinder.o: blockfinder.cpp blockfinder.h scheme.h task.h
-
 ncs.o: ncs.cpp ncs.h
 
-classes.o: classes.cpp ncs.h 
+classes.o: classes.cpp ncs.h
 
-scheme.o: scheme.cpp ncs.h scheme.h
+blockfinder.o: blockfinder.cpp blockfinder.h ncs.h
 
-task.o: task.cpp task.h
+blockfinder_main.o: blockfinder_main.cpp blockfinder.h ncs.h
 
-blockfinder_main.o: blockfinder_main.cpp blockfinder.h
+scheme.o: scheme.cpp scheme.h
+
+PatternCodes.o: PatternCodes.cpp PatternCodes.h
+
+tasks.o: tasks.cpp tasks.h
 
 blockfinder: $(OBJS)
 	$(CXX) $(LDFLAGS) -o blockfinder $(OBJS) $(LDLIBS)
@@ -30,4 +40,5 @@ blockfinder: $(OBJS)
 #	./test_ncs
 
 clean:
-	$(RM) $(OBJS) test_ncs
+	$(RM) $(OBJS) blockfinder
+
