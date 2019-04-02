@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
         cout << " scheme size " << b.scheme.patterns.size() << endl;
        // cout << " q size " << q.codes.size() << endl;
 
-        ctpl::thread_pool p(4 /* two threads in the pool */);
+        ctpl::thread_pool p(64 /* two threads in the pool */);
 
 
 

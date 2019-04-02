@@ -154,8 +154,8 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 	//vector <int >  ct;
 
 
-    std::ofstream iterlog;          // поток для записи
-    iterlog.open("iterlog.txt");
+//    std::ofstream Iterlog;          // поток для записи
+//    iterlog.open("iterlog.txt");
 
 
 
@@ -220,10 +220,10 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
 
 
-        iterlog<<iterator<<" "<<depth<<" : ";
-	    for(int d=0;d<depth+1; d++)
-            iterlog<<counter[d]<<" ";
-        iterlog<<endl;
+        //iterlog<<iterator<<" "<<depth<<" : ";
+	//    for(int d=0;d<depth+1; d++)
+        //    iterlog<<counter[d]<<" ";
+        //iterlog<<endl;
 
 		next_iteration_output();
  
@@ -342,16 +342,16 @@ void BlockFinder::create_tasks() {
 
 
 
-    std::ofstream iterlog;          // поток для записи
-    iterlog.open("iterlog.txt");
+//    std::ofstream iterlog;          // поток для записи
+//    iterlog.open("iterlog.txt");
 
 
 
     while (true) {
-        //iterlog<<iterator<<" "<<depth<<" : ";
-        for(int d=0;d<depth+1; d++)
-            iterlog<<counter[d]<<" ";
-        iterlog<<endl;
+        // iterlog<<iterator<<" "<<depth<<" : ";
+        // for(int d=0;d<depth+1; d++)
+        //     iterlog<<counter[d]<<" ";
+        // iterlog<<endl;
 
         next_iteration_output();
 
@@ -489,7 +489,7 @@ void BlockFinder::create_tasks() {
 
 
 
-	iterlog.close();
+	// iterlog.close();
 	file1.close();
 
     cout<< "BlockFinder finished after "<<iterator<< " iterations"<<endl;
