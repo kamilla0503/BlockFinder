@@ -23,6 +23,8 @@ public:
 	int task_size=150;
     vector <Task4run> tasks;
 	bool check_t_free;
+	bool task_flag;  /* true after recover_from_counters           */
+	int  task_id;    /* Number of task to be executed              */
 	string results_filename;
 	ofstream result_ofstream;
 	int  min_t_free = -1;
@@ -38,9 +40,10 @@ public:
 	time_t start_time;
 	//BlockFinder( NCS bncs, int bmin_depth, bool bblock_finder_mode, int  bmin_t_free = -1);
 	vector <string> generate_patterns(int  samples, bool top = true);
+	void open_files();
 	void start_blockfinder();
 	void maincycle( const vector <int> start , const vector <int> end   );
-    void recoverfromcounters( vector <int> currentcounters, int numbertask = -1);
+    void recover_from_counters( vector <int> currentcounters, int numbertask = -1);
 
 
 
