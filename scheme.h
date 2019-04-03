@@ -34,3 +34,26 @@ public:
 };
 bool operator==(const Scheme& s1, const Scheme& t2);
 bool operator<(const Scheme& t1, const Scheme& t2);
+
+
+class Scheme_compact{
+public:
+	int samples;
+	vector <int> patterns;
+
+
+	map <string, int> simplified;
+
+
+
+    Scheme_compact();
+	Scheme_compact(Scheme &scheme);
+	void sort();
+
+	string full_str(PatternsCodes &patternscode);
+
+};
+
+
+bool operator==(const Scheme_compact& s1, const Scheme_compact& t2);
+bool operator<(const Scheme_compact& t1, const Scheme_compact& t2);

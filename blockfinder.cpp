@@ -55,19 +55,16 @@ void find_schemes ( int id,  int bsamples, NCS bncs, int bmin_depth, bool bblock
     b.recoverfromcounters(counter_start, numbertask);
     b.maincycle(counter_start, counter_end);
 
+    for ( auto c : b.scheme.simplified ){
+        cout << c.first << " " << c.second << endl;
+    }
 
 
 }
 
-/**
-void find (const BlockFinder b){
-    BlockFinder b_new();
-    b_new = b;
 
 
 
-
-}**/
 
 
 vector<string> BlockFinder::generate_patterns(int  bsamples, bool top ) {
@@ -125,25 +122,6 @@ void BlockFinder::start_blockfinder() {
 	cout << " total number of patterns is  " << patterns[0].size() << endl; 
 }
 
-
-/**
-void BlockFinder::recoverfromcounters( vector <int> currentcounters){
-
-    Scheme tmp("1", ncs, samples );
-
-    vector <string> temp_patterns = patterns;
-
-    for (int c: currentcounters){
-        tmp.add_pattern(temp_patterns[c]);
-
-        temp_patterns = get_next_patterns(temp_patterns, temp_patterns.size()-c, c);
-
-
-    }
-
-
-
-}**/
 
 void BlockFinder::maincycle( const vector <int> start, const vector <int> end   ) {
 	vector<int> patternscurrent, next_patterns;
@@ -619,13 +597,7 @@ void BlockFinder::go_deeper(vector <int> next_patterns) {
 	counter.push_back(0);
 	depth = depth + 1;
 }
-/**
-void BlockFinder::find_schemes() {
-	start_blockfinder();
-	maincycle();
-	blockfinder_finished();
-}
-**/
+
 
 void BlockFinder:: blockfinder_finished() {
 	out1 = "[BlockFinder] finished search in" + to_string(samples) + "samples after " + to_string(iterator) + " iterations " + to_string(results_found) + " ELB schemes found";
@@ -650,8 +622,12 @@ void BlockFinder::save_result() {
 	}
 	int depth_of_scheme;
 	depth_of_scheme= scheme.patterns.size();
-	Scheme new_scheme;
-	new_scheme = scheme;
+	Scheme_compact new_scheme;
+	new_scheme.samples=scheme.samples;
+	new_scheme.patterns=scheme.patterns;
+	new_scheme.simplified=scheme.simplified;
+	//cout << "see new scheme " << new_scheme.patterns[0] << endl;
+	//new_scheme = scheme;
 	new_scheme.sort();
 	if(	result.find(depth_of_scheme) != result.end() ){ 
 		if (result[depth_of_scheme].find(new_scheme) == result[depth_of_scheme].end()) {
@@ -722,7 +698,7 @@ tuple<int, int > count_type_in_list_of_patterns(vector<int> patterns, labeltype 
 	return count_type_in_list_of_simplified(simplified, index_of_t);
 }
 
-void  BlockFinder::write_result(Scheme  new_scheme) {
+void  BlockFinder::write_result(Scheme_compact  new_scheme) {
 	results_found = results_found + 1;
 	result_ofstream << "# iterator = " + to_string(iterator) << endl;
 	result_ofstream << new_scheme.full_str(code_table)<<endl;

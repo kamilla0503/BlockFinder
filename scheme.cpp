@@ -5,12 +5,24 @@ bool operator<(const Scheme& t1, const Scheme& t2) {
 	return (t1.simplified < t2.simplified);
 }
 
+
+bool operator<(const Scheme_compact& t1, const Scheme_compact& t2) {
+    return (t1.simplified < t2.simplified);
+}
+
+
+
 bool Scheme::operator<(const Scheme& t2) {
 	return (this->simplified < t2.simplified);
 }
 
 bool operator==(const Scheme& t1, const Scheme& s2) {
 	return (t1.simplified == s2.simplified);
+}
+
+
+bool operator==(const Scheme_compact& t1, const Scheme_compact& s2) {
+    return (t1.simplified == s2.simplified);
 }
 
 Scheme::Scheme() {
@@ -123,6 +135,13 @@ void Scheme::sort(){
 
 }
 
+
+void Scheme_compact::sort(){
+
+    std::sort(patterns.begin(), patterns.end());
+
+}
+
 void Scheme::add_new_codes(int new_pattern, PatternsCodes &patternscode) {
 	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
 	int m=patternscode.patterns.size();
@@ -211,3 +230,30 @@ string Scheme::full_str(PatternsCodes &patternscode) {
 	s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n" + all_p;
 	return s;
 }
+
+
+
+Scheme_compact::Scheme_compact() {}
+
+
+Scheme_compact::Scheme_compact(Scheme &scheme) {
+    patterns = patterns;
+    simplified=simplified;
+    samples = scheme.samples;
+
+
+}
+
+
+
+string Scheme_compact::full_str(PatternsCodes &patternscode) {
+    string s = "";
+    string all_p = "";
+
+    for (int i : patterns) {
+        all_p = all_p + patternscode.patterns[i] + "\n";
+    }
+    s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n" + all_p;
+    return s;
+}
+
