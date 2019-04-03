@@ -13,6 +13,7 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	index_of_type_T = index_of_type(labeltype('T', 1, 1, 0));
 	if (min_t_free >= 0) {
 		check_t_free = true;
+		cout<<"index of type T is "<<index_of_type_T<<endl;
 	} 
 	if (min_depth <= 1) {
 		min_depth = 2;
@@ -49,7 +50,7 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 
 void find_schemes ( int id,  int bsamples, NCS bncs, int bmin_depth, bool bblock_finder_mode, int bmin_t_free, int numbertask, vector <int> counter_start, vector <int> counter_end  ) {
 
-     BlockFinder b (bsamples, bncs, bmin_depth, true , -1  )   ;
+     BlockFinder b (bsamples, bncs, bmin_depth, true , bmin_t_free )   ;
 
     b.recover_from_counters(counter_start, numbertask);
     b.maincycle(counter_start, counter_end);

@@ -12,6 +12,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 	string name_ncs;
 	int begin, end, samples, min_depth;
+	int auto_min_t_free = -1;
 	cout << "started " << argc << endl;
 	if (argc <= 1) {
 
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	else if(argc ==4){
+
 		name_ncs = argv[1];
 		stringstream convert(argv[2]);
 		convert >> samples;
@@ -30,12 +32,23 @@ int main(int argc, char *argv[]) {
 		cout << "readed" << endl;
 
 		NCS ncs = get_NCS(name_ncs);
-		cout << "////" << endl;
+		//cout << "////" << endl;
 
-		cout << ncs.name << " ?" << endl;
+		cout << "NCS with name "<<ncs.name << " generated" << endl;
+		if(ncs.name=="ALT12" && samples == 3){
+			auto_min_t_free = 8;
+			cout<<"Automatically set min_t_free = 8"<<endl;
+		}
+		else if(ncs.name=="ALT12" && samples == 4){
+			auto_min_t_free = 16;
+			cout<<"Automatically set min_t_free = 8"<<endl;
+		}else{
+			cout<<"Checks of  min_t_free is swithced off"<<endl;
+		}
 
 
-		BlockFinder b(samples, ncs, min_depth, true, -1);
+
+		BlockFinder b(samples, ncs, min_depth, true, auto_min_t_free);
 
         BlockFinder b_c(samples, ncs, min_depth, true, -1);
 
@@ -77,7 +90,7 @@ int main(int argc, char *argv[]) {
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-			p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
+			p.push(find_schemes, samples, ncs, min_depth, true, auto_min_t_free, numbertask, t.counter_start, t.counter_end );
 
 
 			//b_test.maincycle(t.counter_start, t.counter_end);
