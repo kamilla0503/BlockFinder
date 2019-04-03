@@ -7,6 +7,8 @@ CPPFLAGS=-O3 -g -std=c++11 -I.
 LDFLAGS=-O3 -g -std=c++11 -pthread
 LDLIBS=
 
+PROGNAME= blockfinder_parallel_ctpl
+
 SRCS=ncs.cpp \
      classes.cpp \
      blockfinder.cpp \
@@ -17,7 +19,7 @@ SRCS=ncs.cpp \
 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
-all: blockfinder
+all: $(PROGNAME)
 
 ncs.o: ncs.cpp ncs.h
 
@@ -33,8 +35,8 @@ PatternCodes.o: PatternCodes.cpp PatternCodes.h
 
 tasks.o: tasks.cpp tasks.h
 
-blockfinder: $(OBJS)
-	$(CXX) $(LDFLAGS) -o blockfinder $(OBJS) $(LDLIBS)
+$(PROGNAME): $(OBJS)
+	$(CXX) $(LDFLAGS) -o $(PROGNAME) $(OBJS) $(LDLIBS)
 
 clean:
-	rm -rf $(OBJS) blockfinder
+	rm -rf $(OBJS) $(PROGNAME) 
