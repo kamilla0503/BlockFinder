@@ -3,8 +3,8 @@ CXX=g++
 RM=rm -f
 
 
-CPPFLAGS=-O0 -g -std=c++11 -I.
-LDFLAGS=-O0 -g -std=c++11 -pthread
+CPPFLAGS=-O3 -g -std=c++11 -I.
+LDFLAGS=-O3 -g -std=c++11 -pthread
 LDLIBS=
 
 SRCS=ncs.cpp \
@@ -36,3 +36,5 @@ tasks.o: tasks.cpp tasks.h
 blockfinder: $(OBJS)
 	$(CXX) $(LDFLAGS) -o blockfinder $(OBJS) $(LDLIBS)
 
+clean:
+	rm -rf $(OBJS) blockfinder

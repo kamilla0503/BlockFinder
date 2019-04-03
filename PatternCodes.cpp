@@ -66,8 +66,6 @@ void PatternsCodes::create_codes_table() {
 
             if( find(codes_list.begin(), codes_list.end(), symbol_code)!=codes_list.end()   ){
                 code_number=distance(codes_list.begin(),    find(codes_list.begin(), codes_list.end(), symbol_code) );
-
-
             }
             else{
                 code_number=codes_list.size();

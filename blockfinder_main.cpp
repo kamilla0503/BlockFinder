@@ -51,29 +51,27 @@ int main(int argc, char *argv[]) {
         cout << " scheme size " << b.scheme.patterns.size() << endl;
        // cout << " q size " << q.codes.size() << endl;
 
-        ctpl::thread_pool p(4 /* two threads in the pool */);
+        ctpl::thread_pool p(64);
 
-
-
-
-		//ofstream blocks_file;
-		//string block_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.txt";
-		//blocks_file.open(block_filename, fstream::out);
-
-		//blocks_file.open(block_filename);
-		clock_t start = clock();
-
-		//b.find_schemes();
 
 
         ofstream taskfile;
 
+	cout<<"CREATE TASKS STARTED "<<endl;
         b.create_tasks();
+	cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
+
+	// Initialize timers
+	struct timespec wall_clock_start, wall_clock_finish;
+	clock_t cpu_usage_start, cpu_usage_finish;	
+	cpu_usage_start = clock();
+	clock_gettime(CLOCK_MONOTONIC, &wall_clock_start);
 
 
 		cout << endl;
 		int numbertask=0;
 	//	std::future<void> qw = p.push(find_schemes,
+	cout<<"RUNNING ALL "<<to_string(b.tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
         for (Task4run t : b.tasks){
             cout << " numbertask : " << numbertask<< endl;
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
@@ -84,14 +82,6 @@ int main(int argc, char *argv[]) {
 
 			//b_test.maincycle(t.counter_start, t.counter_end);
 
-            ostringstream block_ofilename;
-            block_ofilename<< ncs.name <<setw(3)<<setfill('0')<<numbertask<<"_cpp.elb";
-            //block_filename = block_ofilename.str();
-
-            //blocks_file.open(block_filename);
-            //blocks_file << b.result_string;
-            //blocks_file<< endl;
-            //blocks_file.close();
 
 
             numbertask=numbertask+1;
@@ -101,14 +91,16 @@ int main(int argc, char *argv[]) {
 
 
 
-
-		clock_t end = clock();
+	// Wait for all jobs to finish
+	p.stop(true);
+	cout<<"EXECUTION OF ALL "<<to_string(numbertask)<<" TASKS FINISHED"<<endl;
+	cpu_usage_finish = clock();
+	clock_gettime(CLOCK_MONOTONIC, &wall_clock_finish);
 
        // taskfile.open("tasks.cpp");
 
 
         /**
-
         b_c.counter= {17, 0, 0, 0};
         b_c.depth =3;
         b_c.find_schemes();
@@ -117,16 +109,22 @@ int main(int argc, char *argv[]) {
 
 
 
-		double seconds = (double)(end - start) / CLOCKS_PER_SEC;
-		cout << b.results_found << " found " << endl;
-		//cout << b.result.size() << " size of results" << endl;
-		//cout << b.out1 << endl;
-		//blocks_file << b.result_string;
+	double cpu_usage_seconds = (double)(cpu_usage_finish - cpu_usage_start) / CLOCKS_PER_SEC;
+	double wall_clock_seconds = (wall_clock_finish.tv_sec - wall_clock_start.tv_sec);
+	wall_clock_seconds += (wall_clock_finish.tv_nsec - wall_clock_start.tv_nsec) / 1000000000.0;
+	
+	printf("The CPU usage time:   %f seconds\n", cpu_usage_seconds);
+	printf("The wall clock time:  %f seconds\n", wall_clock_seconds);
+	printf("CPU/wall clock ratio: %5.2f\n", cpu_usage_seconds/wall_clock_seconds);
 
-		//blocks_file.close();
-		printf("Solutions found: %d\n", b.results_found);
-		//cout << "Blocks found (" << b.results_found << ") are written to file " << block_filename << endl;
-		printf("The time: %f seconds\n", seconds);
+	//cout << b.results_found << " found " << endl;
+	//cout << b.result.size() << " size of results" << endl;
+	//cout << b.out1 << endl;
+	//blocks_file << b.result_string;
+
+	//blocks_file.close();
+	//printf("Solutions found: %d\n", b.results_found);
+	//cout << "Blocks found (" << b.results_found << ") are written to file " << block_filename << endl;
 
 
 
