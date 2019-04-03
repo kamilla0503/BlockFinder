@@ -30,7 +30,7 @@ public:
 	vector <Scheme> back_up_schemes = {};
 	bool  block_finder_mode;
 	int results_found;
-	map <int, set< Scheme>> result;//soe
+	map <int, set< Scheme_compact>> result;//soe
 	PatternsCodes code_table;
 	int iterator;
 	int index_of_type_T;
@@ -48,7 +48,7 @@ public:
 	void go_back();
 	void save_result();
 	bool check_have_enought_t_free(Scheme scheme, vector<int>  patterns_left);
-	void  write_result(Scheme  new_scheme);
+	void  write_result(Scheme_compact  new_scheme);
 	vector <int> get_next_patterns(vector <int> patterns, int patterns_left, int  start_point);
 	void go_deeper(vector <int> next_patterns);
 	void go_parallel();
