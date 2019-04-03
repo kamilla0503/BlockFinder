@@ -17,7 +17,7 @@ public:
 	Scheme();
 	Scheme(PatternsCodes &patternscode, string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
 
-   // Scheme( string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
+        // Scheme( string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
 
 	bool check_codes(PatternsCodes &patternscode);
 	void simplify( PatternsCodes &patternscode  );
