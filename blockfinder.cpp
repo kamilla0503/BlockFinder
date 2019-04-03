@@ -5,10 +5,10 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	ncs = bncs;
 	min_depth = bmin_depth;
 	check_t_free = false; 
+	task_flag = false;
+	task_id = -1;
 	block_finder_mode = bblock_finder_mode;
 	depth = 0;  
-	results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
-	result_ofstream.open(results_filename);
 	min_t_free = bmin_t_free;
 	index_of_type_T = index_of_type(labeltype('T', 1, 1, 0));
 	if (min_t_free >= 0) {
@@ -39,9 +39,6 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 
 	begin = bbegin;
 	end = bend; 
-	result_ofstream << "[NCS = " << ncs.name << "]"<<endl<<
-	                "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
-	result_ofstream.flush();
 	
 	out1 = "";
 	start_time = clock();
@@ -52,12 +49,13 @@ void find_schemes ( int id,  int bsamples, NCS bncs, int bmin_depth, bool bblock
 
      BlockFinder b (bsamples, bncs, bmin_depth, true , -1  )   ;
 
-    b.recoverfromcounters(counter_start, numbertask);
+    b.recover_from_counters(counter_start, numbertask);
     b.maincycle(counter_start, counter_end);
 
+    /*
     for ( auto c : b.scheme.simplified ){
         cout << c.first << " " << c.second << endl;
-    }
+    }*/
 
 
 }
@@ -111,15 +109,31 @@ int index_of_type(labeltype label_type) {
 } 
 
 void BlockFinder::start_blockfinder() {
-	if (check_t_free) {
-		cout << "started samples =" << samples << " min depth = " << min_depth << " min_t_free=" << min_t_free << endl; 
-		out1 = "started samples =" + to_string(samples) + " min depth = " + to_string(min_depth) + " min_t_free=" + to_string(min_t_free);
+  	if(!task_flag){
+	  if (check_t_free) {
+		  cout << "Started maincycle. Samples =" << samples << " min depth = " << min_depth << " min_t_free=" << min_t_free << endl; 
+		  out1 = "started samples =" + to_string(samples) + " min depth = " + to_string(min_depth) + " min_t_free=" + to_string(min_t_free);
+	  }
+	  else {
+		  out1 = "Started maincycle. Samples =" + to_string(samples) + " min depth = " + to_string(min_depth);
+		  cout << "started samples =" << samples << " min depth = " << min_depth << endl;
+	  }
+	  cout << " Total number of patterns is  " << patterns[0].size() << endl;
 	}
-	else {
-		out1 = "started samples =" + to_string(samples) + " min depth = " + to_string(min_depth);
-		cout << "started samples =" << samples << " min depth = " << min_depth << endl;
+	if(task_flag){
+	  ostringstream tmp;
+	  tmp<<setw(4)<<setfill('0')<<task_id;
+	  results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
+	  result_ofstream.open(results_filename);
+	}else{
+	  results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
+	  result_ofstream.open(results_filename);
 	}
-	cout << " total number of patterns is  " << patterns[0].size() << endl; 
+	if(result_ofstream.is_open()){
+	   result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
+	   result_ofstream.flush();
+	}
+
 }
 
 
@@ -136,7 +150,6 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 //    iterlog.open("iterlog.txt");
 
 
-
     bool limits=true;
     bool check_limits=false;
     if (start.size()==0 && end.size()==0){
@@ -151,6 +164,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
 
 
+    start_blockfinder();
 
     while (true) {
         order=0;
@@ -172,7 +186,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
             if (order==end.size()){
                 check_limits=true;
-
+/*
                 cout << "end while "<< endl;
                 for (int q: counter){
                     cout << q << " ";
@@ -180,7 +194,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
                 cout << endl;
 
-
+*/
             }
 
         }
@@ -280,7 +294,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 		}
 		check_max_depth();
 	}
-	cout<< "BlockFinder finished after "<<iterator<< " iterations"<<endl;
+	cout<< "BlockFinder finished task "<<to_string(task_id)<<" after "<<iterator<< " iterations"<<endl;
 }
 
 
@@ -324,6 +338,7 @@ void BlockFinder::create_tasks() {
 //    iterlog.open("iterlog.txt");
 
 
+    start_blockfinder();
 
     while (true) {
         // iterlog<<iterator<<" "<<depth<<" : ";
@@ -470,7 +485,7 @@ void BlockFinder::create_tasks() {
 	// iterlog.close();
 	file1.close();
 
-    cout<< "BlockFinder finished after "<<iterator<< " iterations"<<endl;
+    cout<< "CreateTasks finished after "<<iterator<< " iterations"<<endl;
 }
 
 
@@ -482,7 +497,7 @@ void BlockFinder::create_tasks() {
 
 
 
-void BlockFinder::recoverfromcounters( vector <int> currentcounters, int numbertask){
+void BlockFinder::recover_from_counters( vector <int> currentcounters, int numbertask){
 
 	vector<int> temp_patterns = patterns[0];
 	for (int c=0; c<currentcounters.size()-1; c++){
@@ -500,15 +515,10 @@ void BlockFinder::recoverfromcounters( vector <int> currentcounters, int numbert
 
 	depth = currentcounters.size()-1;
 	counter=currentcounters;
-
-	ostringstream tmp;
-	tmp<<setw(4)<<setfill('0')<<numbertask;
-	result_ofstream.close();
-    results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
-    result_ofstream.open(results_filename);
-
-    result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
-    result_ofstream.flush();
+	if(result_ofstream.is_open())result_ofstream.close();
+	task_flag = true;
+	task_id = numbertask;
+	
 
 
 
@@ -551,6 +561,8 @@ void BlockFinder::next_iteration_output()
 	log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
       }
       cout << log.str() << endl;
+      
+      if(result_ofstream.is_open())result_ofstream.flush();
     }
 }
 
@@ -700,7 +712,9 @@ tuple<int, int > count_type_in_list_of_patterns(vector<int> patterns, labeltype 
 
 void  BlockFinder::write_result(Scheme_compact  new_scheme) {
 	results_found = results_found + 1;
-	result_ofstream << "# iterator = " + to_string(iterator) << endl;
-	result_ofstream << new_scheme.full_str(code_table)<<endl;
-	result_ofstream.flush();
+	if(result_ofstream.is_open()){
+	   result_ofstream << "# iterator = " + to_string(iterator) << endl;
+	   result_ofstream << new_scheme.full_str(code_table)<<endl;
+	   //result_ofstream.flush();
+	}
 }
