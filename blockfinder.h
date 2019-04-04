@@ -19,8 +19,9 @@ public:
 	vector <string> patterns_listl;
 	int depth;
 	int max_depth;
-	int parallel_depth=2;
+	int parallel_depth=1;
 	int task_size=150;
+	string task_name;
     vector <Task4run> tasks;
 	bool check_t_free;
 	bool task_flag;  /* true after recover_from_counters           */
@@ -37,7 +38,8 @@ public:
 	int iterator;
 	int index_of_type_T;
 	string out1;
-	time_t start_time;
+	time_t start_cpu_time;
+	struct timespec start_wall_time;
 	//BlockFinder( NCS bncs, int bmin_depth, bool bblock_finder_mode, int  bmin_t_free = -1);
 	vector <string> generate_patterns(int  samples, bool top = true);
 	void open_files();

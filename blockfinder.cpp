@@ -13,6 +13,7 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	index_of_type_T = index_of_type(labeltype('T', 1, 1, 0));
 	if (min_t_free >= 0) {
 		check_t_free = true;
+		cout<<"index of type T is "<<index_of_type_T<<endl;
 	} 
 	if (min_depth <= 1) {
 		min_depth = 2;
@@ -41,13 +42,15 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	end = bend; 
 	
 	out1 = "";
-	start_time = clock();
+	start_cpu_time = clock();
+	clock_gettime(CLOCK_MONOTONIC, &start_wall_time);
+
 }
 
 
 void find_schemes ( int id,  int bsamples, NCS bncs, int bmin_depth, bool bblock_finder_mode, int bmin_t_free, int numbertask, vector <int> counter_start, vector <int> counter_end  ) {
 
-     BlockFinder b (bsamples, bncs, bmin_depth, true , -1  )   ;
+     BlockFinder b (bsamples, bncs, bmin_depth, true , bmin_t_free )   ;
 
     b.recover_from_counters(counter_start, numbertask);
     b.maincycle(counter_start, counter_end);
@@ -125,9 +128,13 @@ void BlockFinder::start_blockfinder() {
 	  tmp<<setw(4)<<setfill('0')<<task_id;
 	  results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
 	  result_ofstream.open(results_filename);
+	  tmp.clear();
+	  tmp<<"[Task"<<setw(4)<<setfill('_')<<task_id<<"]";
+	  task_name = tmp.str();
 	}else{
 	  results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
 	  result_ofstream.open(results_filename);
+	  task_name = "[BlockFinder"+to_string(samples)+"]";
 	}
 	if(result_ofstream.is_open()){
 	   result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
@@ -547,16 +554,22 @@ void BlockFinder::recover_from_counters( vector <int> currentcounters, int numbe
 void BlockFinder::next_iteration_output()
 {
     iterator++;
-    if (iterator % 100000 == 0) {
+    if (iterator % 1000000 == 0) {
       ostringstream log;
-      log<< "[BlockFinder" << to_string(samples) << "]";
-      log<< setw(9) << iterator;
-      time_t now = clock();
-      double time_in_run = (double)(now - start_time) / CLOCKS_PER_SEC;
-      log << setw(8) << setprecision(2) << fixed << time_in_run << " sec";
+      string name;
+      log<< task_name;
+      log<< setw(4) << iterator/1000000<<"M ";
+      time_t now_cpu_time = clock();
+      struct timespec now_wall_time;
+      clock_gettime(CLOCK_MONOTONIC, &now_wall_time);
+      double cpu_time_in_run = (double)(now_cpu_time - start_cpu_time) / CLOCKS_PER_SEC;
+      double wall_time_in_run = (now_wall_time.tv_sec - start_wall_time.tv_sec);
+      wall_time_in_run += (now_wall_time.tv_nsec - start_wall_time.tv_nsec) / 1000000000.0;
+      log << setw(8) << setprecision(2) << fixed << wall_time_in_run <<" sec ";
+      log << setw(8) << setprecision(1) << fixed << (double)(iterator/wall_time_in_run) << " iter/sec";
       log << " max_P=" << setw(2) << setiosflags(ios::left) << max_depth + 1;
       log << " ELB_found= " << setw(6) << results_found;
-      for(int d=0; d< depth && d<10; d++){
+      for(int d=0; d< depth && d<13; d++){
 	log << " " << setw(3) << setiosflags(ios::right) << counter[d] << "/";
 	log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
       }
