@@ -40,13 +40,9 @@ class Scheme_compact{
 public:
 	int samples;
 	vector <int> patterns;
-
-
 	map <string, int> simplified;
 
-
-
-    Scheme_compact();
+    	Scheme_compact();
 	Scheme_compact(Scheme &scheme);
 	void sort();
 

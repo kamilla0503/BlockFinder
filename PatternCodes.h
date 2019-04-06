@@ -12,13 +12,12 @@ public:
     vector <string> patterns;
     NCS ncs;
 
-
     valarray <int>  codes;
     vector <string> codes_list;
     vector<string> simple_form;
     map <string, int> code_to_number;
 
-    int calc_code_fast(int pattern1, int pattern2);
+    int calc_code_fast(int pattern1, int pattern2) const;
 
 
 
@@ -35,6 +34,11 @@ public:
 
 };
 
+
+inline int PatternsCodes::calc_code_fast(int pattern1, int pattern2) const {
+    int n =patterns.size();
+    return codes[pattern1*n+pattern2];
+}
 
 
 

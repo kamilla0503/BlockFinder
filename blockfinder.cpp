@@ -44,6 +44,8 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	out1 = "";
 	start_cpu_time = clock();
 	clock_gettime(CLOCK_MONOTONIC, &start_wall_time);
+	tick_cpu_time = start_cpu_time;
+	tick_wall_time = start_wall_time;
 
 }
 
@@ -129,7 +131,7 @@ void BlockFinder::start_blockfinder() {
 	  results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
 	  result_ofstream.open(results_filename);
 	  tmp.clear();
-	  tmp<<"[Task"<<setw(4)<<setfill('_')<<task_id<<"]";
+	  tmp<<"[Task"<<setw(4)<<setfill('0')<<task_id<<"]";
 	  task_name = tmp.str();
 	}else{
 	  results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
@@ -488,7 +490,6 @@ void BlockFinder::create_tasks() {
 	}
 
 
-
 	// iterlog.close();
 	file1.close();
 
@@ -553,20 +554,21 @@ void BlockFinder::recover_from_counters( vector <int> currentcounters, int numbe
 
 void BlockFinder::next_iteration_output()
 {
+    static const int LOG_ITERATOR = 1000000; /* Log every one million of iterations */
     iterator++;
-    if (iterator % 1000000 == 0) {
+    if (iterator % LOG_ITERATOR == 0) {
       ostringstream log;
       string name;
       log<< task_name;
-      log<< setw(4) << iterator/1000000<<"M ";
+      log<< setw(6) << iterator/LOG_ITERATOR<<"M ";
       time_t now_cpu_time = clock();
       struct timespec now_wall_time;
       clock_gettime(CLOCK_MONOTONIC, &now_wall_time);
-      double cpu_time_in_run = (double)(now_cpu_time - start_cpu_time) / CLOCKS_PER_SEC;
-      double wall_time_in_run = (now_wall_time.tv_sec - start_wall_time.tv_sec);
-      wall_time_in_run += (now_wall_time.tv_nsec - start_wall_time.tv_nsec) / 1000000000.0;
-      log << setw(8) << setprecision(2) << fixed << wall_time_in_run <<" sec ";
-      log << setw(8) << setprecision(1) << fixed << (double)(iterator/wall_time_in_run) << " iter/sec";
+      double cpu_time_per_log = (double)(now_cpu_time - tick_cpu_time) / CLOCKS_PER_SEC;
+      double wall_time_per_log = (now_wall_time.tv_sec - tick_wall_time.tv_sec);
+      wall_time_per_log += (now_wall_time.tv_nsec - tick_wall_time.tv_nsec) / 1000000000.0;
+      log << setw(8) << setprecision(2) << fixed << wall_time_per_log <<" sec ";
+      log << setw(8) << setprecision(1) << fixed << (double)(LOG_ITERATOR/wall_time_per_log) << " iter/sec";
       log << " max_P=" << setw(2) << setiosflags(ios::left) << max_depth + 1;
       log << " ELB_found= " << setw(6) << results_found;
       for(int d=0; d< depth && d<13; d++){
@@ -574,8 +576,11 @@ void BlockFinder::next_iteration_output()
 	log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
       }
       cout << log.str() << endl;
-      
+     
       if(result_ofstream.is_open())result_ofstream.flush();
+      tick_cpu_time = now_cpu_time;
+      tick_wall_time = now_wall_time;
+
     }
 }
 

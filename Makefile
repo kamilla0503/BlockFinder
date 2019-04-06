@@ -3,11 +3,11 @@ CXX=g++
 RM=rm -f
 
 
-CPPFLAGS=-O3 -g -std=c++11 -I.
-LDFLAGS=-O3 -g -std=c++11 -pthread
+CPPFLAGS=-std=c++11 -O2 -pg  -I.
+LDFLAGS=-std=c++11 -O2 -g -pg  -pthread
 LDLIBS=
 
-PROGNAME= blockfinder_parallel_ctpl
+PROGRAM=blockfinder_parallel_ctpl
 
 SRCS=ncs.cpp \
      classes.cpp \
@@ -19,7 +19,7 @@ SRCS=ncs.cpp \
 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
-all: $(PROGNAME)
+all: $(PROGRAM)
 
 ncs.o: ncs.cpp ncs.h
 
@@ -35,8 +35,8 @@ PatternCodes.o: PatternCodes.cpp PatternCodes.h
 
 tasks.o: tasks.cpp tasks.h
 
-$(PROGNAME): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $(PROGNAME) $(OBJS) $(LDLIBS)
+$(PROGRAM): $(OBJS)
+	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
 
 clean:
-	rm -rf $(OBJS) $(PROGNAME) 
+	rm -rf $(OBJS) blockfinder

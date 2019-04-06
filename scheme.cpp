@@ -36,7 +36,8 @@ bool Scheme::check_codes(PatternsCodes &patternscode) {
 
 	for (int i: patterns) {
 		for ( int j : patterns) {
-			code =  patternscode.codes[ patternscode.patterns.size()*i  +j]; //!!!
+			//code =  patternscode.codes[ patternscode.patterns.size()*i  +j]; //!!!
+			code =  patternscode.calc_code_fast(i, j);
 			if (first) {
 				first = false;
 				continue;
@@ -148,11 +149,13 @@ void Scheme::add_new_codes(int new_pattern, PatternsCodes &patternscode) {
 	int n=new_pattern;
 	//for ( int i =0; i<patterns.size(); i++) {
 	for ( int i :patterns) {
-		codes.insert(patternscode.codes[i*m+n]);
-		codes.insert(patternscode.codes[n*m+i]);
+		//codes.insert(patternscode.codes[i*m+n]);
+		//codes.insert(patternscode.codes[n*m+i]);
+		codes.insert(patternscode.calc_code_fast(i,n));
+		codes.insert(patternscode.calc_code_fast(n,i));
 	}
 
-	codes.insert(patternscode.codes[n*m+n]);
+	codes.insert(patternscode.calc_code_fast(n,n));
 
 }
 
@@ -175,13 +178,15 @@ bool Scheme::try_pattern(int  new_pattern, PatternsCodes &patternscode) {
 		return false;
 	}
 	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
-    int n = new_pattern;
+   int n = new_pattern;
 	int m = patternscode.patterns.size();
 	for (int i=0; i<patterns.size(); i++) {
 		//code_1 = patternscode.codes[patterns[i]*m+n];
 
-		code_1 = patternscode.codes[patterns[i]*m+n];
-		code_2 = patternscode.codes[n*m+patterns[i]];
+		//code_1 = patternscode.codes[patterns[i]*m+n];
+		//code_2 = patternscode.codes[n*m+patterns[i]];
+		code_1 = patternscode.calc_code_fast(patterns[i],n);
+		code_2 = patternscode.calc_code_fast(n,patterns[i]);
 		
 		if (codes.find(code_1) != codes.end() || codes.find(code_2) != codes.end() || (code_2 == code_1) || new_codes.find(code_1) != new_codes.end() || new_codes.find(code_2) != new_codes.end()) {
 
@@ -193,7 +198,8 @@ bool Scheme::try_pattern(int  new_pattern, PatternsCodes &patternscode) {
 		}
 
 	}
-	int self_code = patternscode.codes[n*m+n];
+	//int self_code = patternscode.codes[n*m+n];
+	int self_code = patternscode.calc_code_fast(n,n);
 	if (codes.find(self_code) != codes.end() || new_codes.find(self_code) != new_codes.end()) {
 		return false;
 

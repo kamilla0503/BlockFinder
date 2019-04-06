@@ -45,12 +45,6 @@ void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs , int 
 }
 
 
-int PatternsCodes::calc_code_fast(int pattern1, int pattern2) {
-    int n =patterns.size();
-    return codes[pattern1*n+pattern2];
-
-}
-
 void PatternsCodes::create_codes_table() {
     string symbol_code;
     int code_number;
