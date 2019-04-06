@@ -3,11 +3,11 @@ CXX=g++
 RM=rm -f
 
 
-CPPFLAGS=-std=c++11 -O2 -pg  -I.
+CPPFLAGS=-std=c++11 -O2 -g -pg  -I.
 LDFLAGS=-std=c++11 -O2 -g -pg  -pthread
 LDLIBS=
 
-PROGRAM=blockfinder_parallel_ctpl
+PROGRAM=blockfinder_simple_int
 
 SRCS=ncs.cpp \
      classes.cpp \
@@ -39,4 +39,4 @@ $(PROGRAM): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
 
 clean:
-	rm -rf $(OBJS) blockfinder
+	rm -rf $(OBJS) $(PROGRAM)

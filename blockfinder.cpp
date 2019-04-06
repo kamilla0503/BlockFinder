@@ -34,10 +34,12 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, bool bblock_fi
 	//code_table.setPatternsCodes(patterns, ncs);
 
 	code_table.setPatternsCodes(patterns_listl, ncs, min_depth);
+	cout<<"Code Table generated, "<<code_table.n_patterns<<
+	  " patterns, "<<code_table.n_simplified<<" simplified"<<endl;
 
 
 	scheme.setscheme(code_table,"1", ncs, samples, {});
-
+	
 	begin = bbegin;
 	end = bend; 
 	
@@ -343,10 +345,8 @@ void BlockFinder::create_tasks() {
 
 
 
-//    std::ofstream iterlog;          // поток для записи
-//    iterlog.open("iterlog.txt");
-
-
+//    std::ofstream iterlog;          // поток для записи  
+//    iterlog.open("CreateTastks_iterlog.txt");
     start_blockfinder();
 
     while (true) {
@@ -476,12 +476,12 @@ void BlockFinder::create_tasks() {
 	for (Task4run c: tasks){
 
 		for (int i: c.counter_start){
-			file1 <<setw(2)<< i << " ";
+			file1 <<setw(3)<< i << " ";
 
 		}
 		file1<<" : ";
 		for (int i: c.counter_end){
-			file1 <<setw(2)<< i << " ";
+			file1 <<setw(3)<< i << " ";
 
 		}
 
@@ -490,7 +490,7 @@ void BlockFinder::create_tasks() {
 	}
 
 
-	// iterlog.close();
+	//iterlog.close();
 	file1.close();
 
     cout<< "CreateTasks finished after "<<iterator<< " iterations"<<endl;
@@ -699,23 +699,23 @@ map <string, int>  simplify_list_of_patterns(vector<int> list_of_patterns, Patte
 	return simplified;
 }
 
-tuple<int, int > count_type_in_list_of_simplified(map <string, int> simplified, int index_of_type) {
+tuple<int, int > count_type_in_list_of_simplified(PatternsCodes & patternscodes, vector <int>&  simplified, int index_of_type) {
 	int count_type = 0;
 	int count_all = 0;
 	int has_t;
-	for(  auto sp : simplified) {
+	for( int sp : simplified) {
 		has_t = 0;
-			if (int(sp.first[index_of_type])) {
+			if (int(patternscodes.simple_form[sp][index_of_type])) {
 				has_t = 1;
 			}
-			count_type = count_type + has_t * sp.second;
-			count_all = count_all  + sp.second;
+			count_type = count_type + has_t * simplified[sp];
+			count_all = count_all  + simplified[sp];
 	}
 	return  make_tuple(count_type, count_all - count_type);
 }
 
-tuple<int, int > count_type_in_list_of_patterns(vector<int> patterns, labeltype label_type, PatternsCodes &patternscode) {
-	map <string, int>  simplified = simplify_list_of_patterns(patterns, patternscode);
+tuple<int, int > count_type_in_list_of_patterns(PatternsCodes & patternscodes, vector<int> patterns, labeltype label_type, PatternsCodes &patternscode) {
+	vector <int>  simplified = simplify_list_of_patterns(patterns, patternscode);
 	//vector <string> p;
 
 	/** map <int, string> simplified;

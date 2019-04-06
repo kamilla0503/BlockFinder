@@ -62,7 +62,7 @@ void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS sncs, in
 
 	set <string> codes; 
 	good = check_codes( patternscode  );
-	map <string, int> simplified;
+	//map <string, int> simplified;
 	simplify(patternscode);
 	set <string> new_codes;
 	//code_table.setPatternsCodes(patterns, ncs);
@@ -71,16 +71,11 @@ void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS sncs, in
 
 
 void Scheme::simplify(PatternsCodes &patternscode) {
-	string simple_pattern;
-	simplified = {};
+	//string simple_pattern;
+	//simplified = {};
+	simplified.assign(patternscode.n_simplified, 0);
 	for (int pattern : patterns) {
-		simple_pattern = patternscode.simple_form[pattern];
-		if ((simplified.size() != 0) && (simplified.find(simple_pattern) != simplified.end())) {
-			simplified[simple_pattern] = simplified[simple_pattern] + 1;
-		}
-		else {
-			simplified[simple_pattern] = 1;
-		}
+	   simplified[patternscode.simplified_ints[pattern]]++;
 	}
 }
 
@@ -253,13 +248,20 @@ Scheme_compact::Scheme_compact(Scheme &scheme) {
 
 
 string Scheme_compact::full_str(PatternsCodes &patternscode) {
-    string s = "";
+    string header= "[ELB ";
     string all_p = "";
+    string sv = "   [SV";
+    string s;
 
+    header = header + "samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n";
+    for (int int_simple : simplified) {
+      sv = sv + " "+ to_string(int_simple);
+    }
+    sv = sv + "]\n";
     for (int i : patterns) {
         all_p = all_p + patternscode.patterns[i] + "\n";
     }
-    s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n" + all_p;
+    s = header + sv + all_p;
     return s;
 }
 

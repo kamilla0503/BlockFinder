@@ -9,7 +9,8 @@ public:
 	vector <int> patterns;
 	set <int> codes;
 	set <string> new_codes;
-	map <string, int> simplified;
+//	map <string, int> simplified;
+        vector<int> simplified;
 
 	//PatternsCodes code_table;
 
@@ -40,7 +41,7 @@ class Scheme_compact{
 public:
 	int samples;
 	vector <int> patterns;
-	map <string, int> simplified;
+	vector <int> simplified;
 
     	Scheme_compact();
 	Scheme_compact(Scheme &scheme);
