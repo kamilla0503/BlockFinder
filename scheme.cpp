@@ -75,7 +75,7 @@ void Scheme::simplify(PatternsCodes &patternscode) {
 	//simplified = {};
 	simplified.assign(patternscode.n_simplified, 0);
 	for (int pattern : patterns) {
-	   simplified[patternscode.simplified_ints[pattern]]++;
+	   simplified[patternscode.simple_ints[pattern]]++;
 	}
 }
 

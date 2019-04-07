@@ -19,6 +19,8 @@
 //#include<tr1>
 using namespace std;
 
+static constexpr int N_LABELTYPES = 8;
+
 class labeltype {
 public:
 	//string name;
@@ -27,12 +29,10 @@ public:
 	char name; 
 	bool label_HN, label_CA, label_CO;
 	// 
-	labeltype(char lname = 'X', bool l_HN =0, bool l_CA=0, bool l_CO=0) {
-		name = lname;
-		label_HN = l_HN;
-		label_CA = l_CA;
-		label_CO = l_CO;
-	}
+	labeltype();
+	labeltype(char lname, bool l_HN, bool l_CA, bool l_CO);
+	/* Constructor is NMR-specific, the code is located in file nmr.cpp  */
+	labeltype(char lname);
 
 	bool operator<(const labeltype & t2);
 
@@ -51,6 +51,7 @@ class spectrum {
 public:
 	string name;
 	spectrum(string sname);
+	/* method is NMR-specific, the code is located in file nmr.cpp  */
 	int has_signal(labeltype label_type_1, labeltype label_type_2);
 };
 
@@ -66,6 +67,8 @@ public:
 	//map<pattern_type, labeltype> label_dict
 	map<char, labeltype> label_dict;
 	vector <char> letters;
+   int index_of_labeltype(labeltype);
+   int index_of_labeltype(char);
 	//vector <> spectra_numbers; 
 	map<labeltype, int> label_power;
 	map <labeltype, map <labeltype, string>> codes_dict;
@@ -74,7 +77,10 @@ public:
 	
 	//name, spectra_list, label_types, deuterated = False)
 	//NCS(string name_ncs, vector<spectrum>spectra_list_ncs, vector<labeltype> label_types_ncs, bool deuterated_ncs = false);
-	NCS(string name_ncs = "", vector<spectrum>spectra_list_ncs = {}, vector<labeltype> label_types_ncs = {}, bool deuterated_ncs = 0);
+	NCS();
+	NCS(string name_ncs, vector<spectrum>spectra_list_ncs = {}, vector<labeltype> label_types_ncs = {}, bool deuterated_ncs = 0);
+	/* Constructor is NMR-specific, the code is located in file nmr.cpp  */
+	NCS(string name_ncs, vector<string>spectra_names = {}, string label_types_string = "", bool deuterated_ncs = 0);
 	void make_coding_table(void); 
 	NCS& operator=(NCS& other);
 	string calc_code(string pattern_1, string pattern_2);

@@ -6,6 +6,16 @@ spectrum::spectrum(string sname) {
 	name = sname; 
 }
 
+labeltype::labeltype(){}
+
+labeltype::labeltype(char lname, bool l_HN, bool l_CA, bool l_CO) {
+		name = lname;
+		label_HN = l_HN;
+		label_CA = l_CA;
+		label_CO = l_CO;
+}
+
+
 bool labeltype::operator<(const labeltype& t2) {
 	return (this->name < t2.name);
 }
@@ -27,41 +37,9 @@ bool operator==(const labeltype& t1, const labeltype& t2) { //*
 	return (t1.name == t2.name);
 }
 
-int spectrum::has_signal(labeltype label_type_1, labeltype label_type_2) {
-		if (name == "HSQC") {
-			return int(label_type_2.label_HN);
-		}
-		else if (name == "HNCO") {
-			return int(label_type_2.label_HN &&  label_type_1.label_CO);
-		}
-
-		else if (name == "HNCA") {
-			return int(label_type_2.label_HN && (label_type_1.label_CA || label_type_2.label_CA));
-		}
-
-		else if (name == "HNCOCA") {
-			return int(label_type_2.label_HN && label_type_1.label_CO && label_type_1.label_CA);
-		}
-
-		else if (name == "COfHNCA") {
-			return int(label_type_2.label_HN  && label_type_1.label_CA &&  !(label_type_1.label_CO));
-		}
-
-		else if (name == "DQHNCA") {
-			return int(label_type_2.label_HN && label_type_1.label_CA &&    label_type_2.label_CA);
-		}
-
-		else if (name == "HNCACO") {
-			return int(label_type_2.label_HN &&  label_type_2.label_CA && label_type_2.label_CO);
-		}
-
-		else if (name == "HNCAfCO") 
-			return int(label_type_2.label_HN && !(label_type_2.label_CA) && label_type_2.label_CO);
-else{
-return 0;}
-
-
-	}
+NCS::NCS(){
+  name = "Undefined_NCS";
+}
 
 NCS::NCS(string name_ncs , vector<spectrum>spectra_list_ncs , vector<labeltype> label_types_ncs , bool deuterated_ncs ) {
 		name = name_ncs;
@@ -74,6 +52,38 @@ NCS::NCS(string name_ncs , vector<spectrum>spectra_list_ncs , vector<labeltype> 
 		letters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h','i', 'j' };
 		make_coding_table(); 
 	}
+
+NCS::NCS(string name_ncs , vector<string>spectra_names , string label_types_string , bool deuterated_ncs ) {
+		name = name_ncs;
+		spec_list = {};
+		for (auto spec_name : spectra_names){
+		  spectrum s(spec_name);
+		  spec_list.push_back(s);
+		}
+		label_types = {};
+		for (auto ltype_name: label_types_string){
+		  labeltype l(ltype_name);
+		  label_types.push_back(l);
+		}
+		deuterated = deuterated_ncs;
+		for (labeltype l : label_types) {
+			label_dict[l.name] = l;
+		}
+		letters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h','i', 'j' };
+		make_coding_table(); 
+	}
+
+int NCS::index_of_labeltype(labeltype lt){
+  return index_of_labeltype(lt.name);
+}
+
+int NCS::index_of_labeltype(char lname){
+  for(int l=0; l<label_types.size(); l++){
+    if( label_types[l].name == lname) return(l);
+  }
+  cerr<<"Error: No labeltype "<<lname<<" in NCS "<<name<<endl; 
+  /* TODO: exception */
+}
 
 void	NCS::make_coding_table() {
 		vector <vector <string>> codes_table;
@@ -176,7 +186,9 @@ string NCS::calc_code(string pattern_1, string pattern_2) {
 }
 
 string simplify_pattern(string pattern) { 
-	string result = "";
+	string result = pattern;
+	sort(result.begin(), result.end());
+	/*
 	static map <  char, int> res = { {'X' , 0}, {'N',1}, {'C',2}, {'D',3}, {'A',4}, {'T',5}, {'S', 6}, {'F',7} }; 
 	vector <int> simple_form;
 	for (int i = 0; i < res.size(); i++) {
@@ -187,7 +199,7 @@ string simplify_pattern(string pattern) {
 	}
 	for ( int  a : simple_form) {
 		result = result + to_string(a);
-	}
+	}*/
 	return result;
 }
 

@@ -10,7 +10,7 @@ LDLIBS=
 PROGRAM=blockfinder_simple_int
 
 SRCS=ncs.cpp \
-     classes.cpp \
+     nmr.cpp \
      blockfinder.cpp \
      scheme.cpp \
      blockfinder_main.cpp \
@@ -23,7 +23,7 @@ all: $(PROGRAM)
 
 ncs.o: ncs.cpp ncs.h
 
-classes.o: classes.cpp ncs.h
+nmr.o: nmr.cpp ncs.h 
 
 blockfinder.o: blockfinder.cpp blockfinder.h ncs.h
 

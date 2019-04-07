@@ -48,21 +48,7 @@ int main(int argc, char *argv[]) {
 
 
 
-		BlockFinder b(samples, ncs, min_depth, true, auto_min_t_free);
-
-        BlockFinder b_c(samples, ncs, min_depth, true, -1);
-
-        //b_c.counter= {17, 0, 0};
-
-
-       // b_c.find_schemes();
-        cout << "b_c " << b.results_found;
-
-      //  PatternsCodes q(b_c.scheme.patterns, b_c.ncs);
-
-
-        cout << " scheme size " << b.scheme.patterns.size() << endl;
-       // cout << " q size " << q.codes.size() << endl;
+		BlockFinder b(samples, ncs, min_depth, auto_min_t_free);
 
         ctpl::thread_pool p(64);
 
@@ -90,7 +76,7 @@ int main(int argc, char *argv[]) {
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-			p.push(find_schemes, samples, ncs, min_depth, true, auto_min_t_free, numbertask, t.counter_start, t.counter_end );
+			p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, numbertask, t.counter_start, t.counter_end );
 
 
 			//b_test.maincycle(t.counter_start, t.counter_end);
