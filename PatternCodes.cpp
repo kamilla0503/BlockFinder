@@ -30,7 +30,7 @@ void PatternsCodes::create_labeltype_flags(){
     have_labeltype_simplified_flag = false;
     have_labeltype_pattern_flag = false;
     for(int p=0; p<n_patterns; p++){
-	string pattern = codes_list[p];
+	string pattern = simple_form[p];
 	int s = simple_ints[p];
 	for(int l=0; l< ncs.label_types.size(); l++){
 	  labeltype lt = ncs.label_types[l];

@@ -124,13 +124,11 @@ void BlockFinder::start_blockfinder() {
      cout << " Total number of patterns is  " << patterns[0].size() << endl;
    }
    if(task_flag){
-     ostringstream tmp;
-     tmp<<setw(4)<<setfill('0')<<task_id;
-     results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+tmp.str()+"_cpp.elb";
+     ostringstream task_id_string;
+     task_id_string<<setw(4)<<setfill('0')<<task_id;
+     results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+task_id_string.str()+"_cpp.elb";
      result_ofstream.open(results_filename);
-     tmp.clear();
-     tmp<<"[Task"<<setw(4)<<setfill('0')<<task_id<<"]";
-     run_name = tmp.str();
+     run_name = "[Task" + task_id_string.str() + "]";
    }else{
      results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
      result_ofstream.open(results_filename);

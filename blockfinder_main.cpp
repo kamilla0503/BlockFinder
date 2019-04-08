@@ -60,6 +60,12 @@ int main(int argc, char *argv[]) {
         b.create_tasks();
 	cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
 
+	BlockFinder test(samples, ncs, min_depth, auto_min_t_free);
+	test.recover_from_counters(b.tasks[0].counter_start, 99);
+	test.maincycle(b.tasks[0].counter_start, b.tasks[0].counter_end);
+	exit(0);
+
+
 	// Initialize timers
 	struct timespec wall_clock_start, wall_clock_finish;
 	clock_t cpu_usage_start, cpu_usage_finish;	
