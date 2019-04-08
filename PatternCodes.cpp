@@ -29,9 +29,11 @@ void PatternsCodes::create_labeltype_flags(){
     have_labeltype_pattern_flag.resize(n_patterns);
     have_labeltype_simplified_flag = false;
     have_labeltype_pattern_flag = false;
+    /*cout<<"@@@  create_labeltype_flags @@@";*/
     for(int p=0; p<n_patterns; p++){
 	string pattern = simple_form[p];
 	int s = simple_ints[p];
+	/*cout<<p<<" simple_form="<<pattern<<" "<<" s="<<s<<endl;*/
 	for(int l=0; l< ncs.label_types.size(); l++){
 	  labeltype lt = ncs.label_types[l];
 	  if(find(pattern.begin(), pattern.end(), lt.name)!=pattern.end()){
@@ -62,7 +64,7 @@ void PatternsCodes::create_simplified_table()
     unique_simplified_patterns= {};
     simple_ints = {};
     set <string> simplified_set = {};
-    int unique_simple_count = 0;
+    int unique_simple_count = -1; /* will be incremented */
     for(int i =0; i<patterns.size(); i++){
       string simple_pattern = simplify_pattern(patterns[i]);
       if (find(simplified_set.begin(), simplified_set.end(), simple_pattern) == simplified_set.end() ){
@@ -72,6 +74,10 @@ void PatternsCodes::create_simplified_table()
       }
       simple_form.push_back(simple_pattern);
       simple_ints.push_back(unique_simple_count);
+      /*cout<<i<<" pattern="<<patterns[i]<<
+	", simple_pattern= "<<simple_pattern<<
+	", unique_simple_count = "<<unique_simple_count<<endl;*/
+      
     }
     n_simplified = unique_simplified_patterns.size();
 }

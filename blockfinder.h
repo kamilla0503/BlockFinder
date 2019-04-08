@@ -18,12 +18,12 @@ public:
 	int max_depth;
 	int parallel_depth=1;
 	int task_size=100;
+	int  task_id;    /* Number of task to be executed              */
 	string run_name;
     	vector <Task4run> tasks;
 	bool check_t_free;
 	int  min_t_free = -1;
 	bool task_flag;  /* true after recover_from_counters           */
-	int  task_id;    /* Number of task to be executed              */
 	string results_filename;
 	ofstream result_ofstream;
 	vector <int> counter = {}; //temporary
