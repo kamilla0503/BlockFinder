@@ -40,7 +40,7 @@ public:
 	void open_files();
 	void start_blockfinder();
 	void maincycle( const vector <int> start , const vector <int> end   );
-    void recover_from_counters( vector <int> currentcounters, int numbertask = -1);
+    void recover_from_counters( const vector <int> & current_counters, int numbertask = -1);
 
 
 
@@ -48,8 +48,8 @@ public:
 	void go_back();
 	void save_result();
 	bool check_have_enought_t_free(const Scheme & scheme, const vector<int> & patterns_left);
-	void  write_result(Scheme_compact  new_scheme);
-	vector <int> get_next_patterns(vector <int> patterns, int patterns_left, int  start_point);
+	void write_result(Scheme_compact  new_scheme);
+	void get_next_patterns(vector <int> & patterns, int patterns_left, int start_point, vector<int> & result);
 	void go_deeper(vector <int> next_patterns);
 	void go_parallel();
 	void check_max_depth();

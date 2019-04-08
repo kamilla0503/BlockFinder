@@ -267,7 +267,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
          continue;
       }
-      next_patterns = get_next_patterns(patternscurrent, patterns_left, start_point);
+      get_next_patterns(patternscurrent, patterns_left, start_point, next_patterns);
 
 
       flag_t_free = true;
@@ -394,7 +394,7 @@ void BlockFinder::create_tasks() {
 
             continue;
         }
-        next_patterns = get_next_patterns(patternscurrent, patterns_left, start_point);
+        get_next_patterns(patternscurrent, patterns_left, start_point, next_patterns);
 
 
         flag_t_free = true;
@@ -499,31 +499,29 @@ void BlockFinder::create_tasks() {
 
 
 
-void BlockFinder::recover_from_counters( vector <int> currentcounters, int numbertask){
+void BlockFinder::recover_from_counters( const vector <int> & recover_counters, int numbertask){
 
-   vector<int> temp_patterns = patterns[0];
-   for (int c=0; c<currentcounters.size()-1; c++){
+   vector<int> current_patterns = patterns[0];
+   vector<int> new_patterns;
+   for (int c=0; c<recover_counters.size()-1; c++){
 
       back_up_schemes.push_back(scheme);
 
-      scheme.add_pattern(temp_patterns[currentcounters[c]], code_table);
+      scheme.add_pattern(current_patterns[recover_counters[c]], code_table);
 
-      temp_patterns = get_next_patterns(temp_patterns, temp_patterns.size()-currentcounters[c]-1, currentcounters[c]+1);
+      get_next_patterns(current_patterns, current_patterns.size()-recover_counters[c]-1, recover_counters[c]+1, new_patterns);
 
-      patterns.push_back(temp_patterns);
+      patterns.push_back(new_patterns);
 
+      current_patterns = new_patterns;
 
    }
 
-   depth = currentcounters.size()-1;
-   counter=currentcounters;
+   depth = recover_counters.size()-1;
+   counter=recover_counters;
    if(result_ofstream.is_open())result_ofstream.close();
    task_flag = true;
    task_id = numbertask;
-   
-
-
-
 }
 
 
@@ -593,14 +591,13 @@ void BlockFinder::check_max_depth() {
 
 } 
 
-vector <int> BlockFinder::get_next_patterns(vector <int> patterns1, int patterns_left, int  start_point) {
-   vector <int> next_patterns ;
+void BlockFinder::get_next_patterns(vector <int> & patterns1, int patterns_left, int  start_point, vector<int> & result_next_patterns) {
+   result_next_patterns = {};
    for (int i = 0; i < patterns_left; i++)  {
       if( scheme.try_pattern(patterns1[i + start_point], code_table)) {
-         next_patterns.push_back(patterns1[i + start_point]);
+         result_next_patterns.push_back(patterns1[i + start_point]);
       }
    }
-   return next_patterns;
 }
 
 
