@@ -63,17 +63,23 @@ void PatternsCodes::create_simplified_table()
     simple_form={};
     unique_simplified_patterns= {};
     simple_ints = {};
-    set <string> simplified_set = {};
+    map <string, int> simplified_map = {};
     int unique_simple_count = -1; /* will be incremented */
+    int pattern_simple_int;
     for(int i =0; i<patterns.size(); i++){
       string simple_pattern = simplify_pattern(patterns[i]);
-      if (find(simplified_set.begin(), simplified_set.end(), simple_pattern) == simplified_set.end() ){
+      auto seek_pattern = simplified_map.find(simple_pattern);
+      if (seek_pattern == simplified_map.end() ){
         unique_simplified_patterns.push_back(simple_pattern);
-        simplified_set.insert(simple_pattern);
 	unique_simple_count++;
+	pattern_simple_int = unique_simple_count;
+        simplified_map[simple_pattern]=pattern_simple_int;
+      }
+      else{
+	pattern_simple_int = simplified_map[simple_pattern];
       }
       simple_form.push_back(simple_pattern);
-      simple_ints.push_back(unique_simple_count);
+      simple_ints.push_back(pattern_simple_int);
       /*cout<<i<<" pattern="<<patterns[i]<<
 	", simple_pattern= "<<simple_pattern<<
 	", unique_simple_count = "<<unique_simple_count<<endl;*/

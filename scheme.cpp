@@ -261,8 +261,8 @@ string Scheme_compact::full_str(PatternsCodes &patternscode) {
     for (int i : patterns) {
         all_p = all_p + patternscode.patterns[i] + "\n";
     }
-    //s = header + sv + all_p;
-    s = header + all_p;
+    s = header + sv + all_p;
+    //s = header + all_p;
     return s;
 }
 
