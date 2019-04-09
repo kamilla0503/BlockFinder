@@ -151,8 +151,8 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
    //vector <int >  ct;
 
 
-    std::ofstream iterlog;          // поток для записи
-    iterlog.open("iterlog"+to_string(task_id)+".txt");
+//    std::ofstream iterlog;          // поток для записи
+//    iterlog.open("iterlog"+to_string(task_id)+".txt");
 
 
     bool limits=true;
@@ -217,10 +217,10 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
 
 
-        iterlog<<iterator<<" "<<depth<<" : ";
-          for(int d=0;d<depth+1; d++)
-            iterlog<<counter[d]<<" ";
-        iterlog<<endl;
+//        iterlog<<iterator<<" "<<depth<<" : ";
+//          for(int d=0;d<depth+1; d++)
+//            iterlog<<counter[d]<<" ";
+//        iterlog<<endl;
 
       next_iteration_output();
  
