@@ -19,7 +19,7 @@ public:
 	vector <string> patterns_listl;
 	int depth;
 	int max_depth;
-	int parallel_depth=2;
+	int parallel_depth=1;
 	int task_size=150;
     vector <Task4run> tasks;
 	bool check_t_free;
