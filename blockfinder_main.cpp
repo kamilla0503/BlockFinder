@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
 
-            p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
+            p.push(find_schemes, samples, ncs, min_depth,  -1, numbertask, t.counter_start, t.counter_end );
             //break;
            // b_test.maincycle(t.counter_start, t.counter_end);
           //  break ;
