@@ -12,6 +12,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 	string name_ncs;
 	int begin, end, samples, min_depth;
+	int auto_min_t_free = -1;
 	cout << "started " << argc << endl;
 	if (argc <= 1) {
 
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	else if(argc ==4){
+
 		name_ncs = argv[1];
 		stringstream convert(argv[2]);
 		convert >> samples;
@@ -30,28 +32,29 @@ int main(int argc, char *argv[]) {
 		cout << "readed" << endl;
 
 		NCS ncs = get_NCS(name_ncs);
-		cout << "////" << endl;
+		//cout << "////" << endl;
 
-		cout << ncs.name << " ?" << endl;
-
-
-		BlockFinder b(samples, ncs, min_depth, true, -1);
-
-        BlockFinder b_c(samples, ncs, min_depth, true, -1);
-
-        //b_c.counter= {17, 0, 0};
-
-
-       // b_c.find_schemes();
-        cout << "b_c " << b.results_found;
-
-      //  PatternsCodes q(b_c.scheme.patterns, b_c.ncs);
+		cout << "NCS with name "<<ncs.name << " generated" << endl;
+		if(ncs.name=="ALT12" && samples == 3){
+			auto_min_t_free = 8;
+			cout<<"Automatically set min_t_free = 8"<<endl;
+		}
+		else if(ncs.name=="ALT12" && samples == 4){
+			auto_min_t_free = 16;
+			cout<<"Automatically set min_t_free = 8"<<endl;
+		}else{
+			cout<<"Checks of  min_t_free is swithced off"<<endl;
+		}
 
 
-        cout << " scheme size " << b.scheme.patterns.size() << endl;
-       // cout << " q size " << q.codes.size() << endl;
 
-        ctpl::thread_pool p(4);
+		BlockFinder b(samples, ncs, min_depth, auto_min_t_free);
+
+
+        ctpl::thread_pool p(2);
+
+    
+
 
 
 
@@ -60,6 +63,12 @@ int main(int argc, char *argv[]) {
 	cout<<"CREATE TASKS STARTED "<<endl;
         b.create_tasks();
 	cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
+
+	//BlockFinder test(samples, ncs, min_depth, auto_min_t_free);
+	//test.recover_from_counters(b.tasks[0].counter_start, 99);
+	//test.maincycle(b.tasks[0].counter_start, b.tasks[0].counter_end);
+	//exit(0);
+
 
 	// Initialize timers
 	struct timespec wall_clock_start, wall_clock_finish;
@@ -72,23 +81,19 @@ int main(int argc, char *argv[]) {
 		int numbertask=0;
 	//	std::future<void> qw = p.push(find_schemes,
 	cout<<"RUNNING ALL "<<to_string(b.tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
-        for (Task4run t : b.tasks) {
+
+        for (Task4run t : b.tasks){
             //cout << " numbertask : " << numbertask<< endl;
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-			//p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
 
-
-			//back
             p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
             //break;
            // b_test.maincycle(t.counter_start, t.counter_end);
           //  break ;
 
-
             numbertask=numbertask+1;
-
 
 
 

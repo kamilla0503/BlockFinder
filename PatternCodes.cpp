@@ -6,62 +6,96 @@
 
 
 
-PatternsCodes::PatternsCodes( vector<string> a_patterns, NCS a_ncs , int min_d      ){
+PatternsCodes::PatternsCodes( vector<string> a_patterns, NCS a_ncs      ){
     patterns=a_patterns;
+    n_patterns = patterns.size();
     ncs = a_ncs;
-    min_depth = min_d;
+
+    create_simplified_table();
+    create_labeltype_flags();
     create_codes_table();
-
-    simple_form={};
-    for(int i =0; i<patterns.size(); i++){
-        simple_form.push_back(simplify_pattern(patterns[i]));
-    }
-
 
 }
 
 PatternsCodes::PatternsCodes() {
     patterns={};
+    n_patterns = 0;
 
 }
 
-void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs , int min_d ) {
+
+void PatternsCodes::create_labeltype_flags(){
+    have_labeltype_simplified_flag.resize(n_simplified);
+    have_labeltype_pattern_flag.resize(n_patterns);
+    have_labeltype_simplified_flag = false;
+    have_labeltype_pattern_flag = false;
+    /*cout<<"@@@  create_labeltype_flags @@@";*/
+    for(int p=0; p<n_patterns; p++){
+	string pattern = simple_form[p];
+	int s = simple_ints[p];
+	/*cout<<p<<" simple_form="<<pattern<<" "<<" s="<<s<<endl;*/
+	for(int l=0; l< ncs.label_types.size(); l++){
+	  labeltype lt = ncs.label_types[l];
+	  if(find(pattern.begin(), pattern.end(), lt.name)!=pattern.end()){
+	     have_labeltype_pattern_flag[p][l] = true;
+	     have_labeltype_simplified_flag[s][l] = true;
+	  }
+	}
+    }
+}
+
+void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs ) {
 
     patterns=a_patterns;
+    n_patterns = patterns.size();
     ncs = a_ncs;
-    min_depth = min_d;
-    int n=patterns.size();
+    //int n=patterns.size();
     //valarray<int> codes(n*n);
 
+    create_simplified_table();
+    create_labeltype_flags();
     create_codes_table();
+}
 
+
+void PatternsCodes::create_simplified_table()
+{
     simple_form={};
+    unique_simplified_patterns= {};
+    simple_ints = {};
+    map <string, int> simplified_map = {};
+    int unique_simple_count = -1; /* will be incremented */
+    int pattern_simple_int;
     for(int i =0; i<patterns.size(); i++){
-        simple_form.push_back(simplify_pattern(patterns[i]));
+      string simple_pattern = simplify_pattern(patterns[i]);
+      auto seek_pattern = simplified_map.find(simple_pattern);
+      if (seek_pattern == simplified_map.end() ){
+        unique_simplified_patterns.push_back(simple_pattern);
+	unique_simple_count++;
+	pattern_simple_int = unique_simple_count;
+        simplified_map[simple_pattern]=pattern_simple_int;
+      }
+      else{
+	pattern_simple_int = simplified_map[simple_pattern];
+      }
+      simple_form.push_back(simple_pattern);
+      simple_ints.push_back(pattern_simple_int);
+      /*cout<<i<<" pattern="<<patterns[i]<<
+	", simple_pattern= "<<simple_pattern<<
+	", unique_simple_count = "<<unique_simple_count<<endl;*/
+      
     }
-
-
-
+    n_simplified = unique_simplified_patterns.size();
 }
 
-
-int PatternsCodes::calc_code_fast(int pattern1, int pattern2) {
-    int n =patterns.size();
-    return codes[pattern1*n+pattern2];
-
-}
 
 void PatternsCodes::create_codes_table() {
     string symbol_code;
     int code_number;
 
-    int n=patterns.size();
-
-    codes.resize(n*n);
-   // valarray <int>  codes(n*n); // mb
-    for(int i=0; i<n; i++){
-        //codes.push_back({});
-        for (int j=0; j<n; j++){
+    codes.resize(n_patterns*n_patterns);
+    for(int i=0; i<n_patterns; i++){
+        for (int j=0; j<n_patterns; j++){
             symbol_code= ncs.calc_code(patterns[i], patterns[j]);
 
             if( find(codes_list.begin(), codes_list.end(), symbol_code)!=codes_list.end()   ){
@@ -72,20 +106,7 @@ void PatternsCodes::create_codes_table() {
                 code_to_number[symbol_code]=code_number;
                 codes_list.push_back(symbol_code);
             }
-
-
-            codes[i*n+j]=code_number;
-
-
-
-
-
+            codes[i*n_patterns+j]=code_number;
         }
-
-
-
     }
-
-
-
 }

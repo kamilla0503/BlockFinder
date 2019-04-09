@@ -36,7 +36,8 @@ bool Scheme::check_codes(PatternsCodes &patternscode) {
 
 	for (int i: patterns) {
 		for ( int j : patterns) {
-			code =  patternscode.codes[ patternscode.patterns.size()*i  +j]; //!!!
+			//code =  patternscode.codes[ patternscode.patterns.size()*i  +j]; //!!!
+			code =  patternscode.calc_code_fast(i, j);
 			if (first) {
 				first = false;
 				continue;
@@ -61,7 +62,7 @@ void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS sncs, in
 
 	set <string> codes; 
 	good = check_codes( patternscode  );
-	map <string, int> simplified;
+	//map <string, int> simplified;
 	simplify(patternscode);
 	set <string> new_codes;
 	//code_table.setPatternsCodes(patterns, ncs);
@@ -70,16 +71,11 @@ void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS sncs, in
 
 
 void Scheme::simplify(PatternsCodes &patternscode) {
-	string simple_pattern;
-	simplified = {};
+	//string simple_pattern;
+	//simplified = {};
+	simplified.assign(patternscode.n_simplified, 0);
 	for (int pattern : patterns) {
-		simple_pattern = patternscode.simple_form[pattern];
-		if ((simplified.size() != 0) && (simplified.find(simple_pattern) != simplified.end())) {
-			simplified[simple_pattern] = simplified[simple_pattern] + 1;
-		}
-		else {
-			simplified[simple_pattern] = 1;
-		}
+	   simplified[patternscode.simple_ints[pattern]]++;
 	}
 }
 
@@ -148,11 +144,13 @@ void Scheme::add_new_codes(int new_pattern, PatternsCodes &patternscode) {
 	int n=new_pattern;
 	//for ( int i =0; i<patterns.size(); i++) {
 	for ( int i :patterns) {
-		codes.insert(patternscode.codes[i*m+n]);
-		codes.insert(patternscode.codes[n*m+i]);
+		//codes.insert(patternscode.codes[i*m+n]);
+		//codes.insert(patternscode.codes[n*m+i]);
+		codes.insert(patternscode.calc_code_fast(i,n));
+		codes.insert(patternscode.calc_code_fast(n,i));
 	}
 
-	codes.insert(patternscode.codes[n*m+n]);
+	codes.insert(patternscode.calc_code_fast(n,n));
 
 }
 
@@ -175,13 +173,15 @@ bool Scheme::try_pattern(int  new_pattern, PatternsCodes &patternscode) {
 		return false;
 	}
 	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
-    int n = new_pattern;
+   int n = new_pattern;
 	int m = patternscode.patterns.size();
 	for (int i=0; i<patterns.size(); i++) {
 		//code_1 = patternscode.codes[patterns[i]*m+n];
 
-		code_1 = patternscode.codes[patterns[i]*m+n];
-		code_2 = patternscode.codes[n*m+patterns[i]];
+		//code_1 = patternscode.codes[patterns[i]*m+n];
+		//code_2 = patternscode.codes[n*m+patterns[i]];
+		code_1 = patternscode.calc_code_fast(patterns[i],n);
+		code_2 = patternscode.calc_code_fast(n,patterns[i]);
 		
 		if (codes.find(code_1) != codes.end() || codes.find(code_2) != codes.end() || (code_2 == code_1) || new_codes.find(code_1) != new_codes.end() || new_codes.find(code_2) != new_codes.end()) {
 
@@ -193,7 +193,8 @@ bool Scheme::try_pattern(int  new_pattern, PatternsCodes &patternscode) {
 		}
 
 	}
-	int self_code = patternscode.codes[n*m+n];
+	//int self_code = patternscode.codes[n*m+n];
+	int self_code = patternscode.calc_code_fast(n,n);
 	if (codes.find(self_code) != codes.end() || new_codes.find(self_code) != new_codes.end()) {
 		return false;
 
@@ -247,13 +248,21 @@ Scheme_compact::Scheme_compact(Scheme &scheme) {
 
 
 string Scheme_compact::full_str(PatternsCodes &patternscode) {
-    string s = "";
+    string header= "[ELB ";
     string all_p = "";
+    string sv = "   [SV";
+    string s;
 
+    header = header + "samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n";
+    for (int int_simple : simplified) {
+      sv = sv + " "+ to_string(int_simple);
+    }
+    sv = sv + "]\n";
     for (int i : patterns) {
         all_p = all_p + patternscode.patterns[i] + "\n";
     }
-    s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n" + all_p;
+    s = header + sv + all_p;
+    //s = header + all_p;
     return s;
 }
 
