@@ -269,6 +269,8 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
       }
       get_next_patterns(patternscurrent, patterns_left, start_point, next_patterns);
 
+		cout << iterator << " next patterns size : " << next_patterns.size() << endl;
+
 
       flag_t_free = true;
       if (check_t_free) {

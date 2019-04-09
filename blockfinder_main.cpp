@@ -50,7 +50,11 @@ int main(int argc, char *argv[]) {
 
 		BlockFinder b(samples, ncs, min_depth, auto_min_t_free);
 
+
         ctpl::thread_pool p(2);
+
+    
+
 
 
 
@@ -77,18 +81,20 @@ int main(int argc, char *argv[]) {
 		int numbertask=0;
 	//	std::future<void> qw = p.push(find_schemes,
 	cout<<"RUNNING ALL "<<to_string(b.tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
+
         for (Task4run t : b.tasks){
             //cout << " numbertask : " << numbertask<< endl;
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-			p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, numbertask, t.counter_start, t.counter_end );
 
-
-			//b_test.maincycle(t.counter_start, t.counter_end);
-
+            p.push(find_schemes, samples, ncs, min_depth, true, -1, numbertask, t.counter_start, t.counter_end );
+            //break;
+           // b_test.maincycle(t.counter_start, t.counter_end);
+          //  break ;
 
             numbertask=numbertask+1;
+
 
 
 
