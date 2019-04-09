@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
 
 		BlockFinder b(samples, ncs, min_depth, auto_min_t_free);
 
-
-        ctpl::thread_pool p(2);
+	unsigned int ncpu = std::thread::hardware_concurrency();
+        ctpl::thread_pool p(ncpu);
 
     
 
