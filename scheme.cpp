@@ -54,7 +54,7 @@ bool Scheme::check_codes(PatternsCodes &patternscode) {
 }
 
 
-void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS sncs, int  bsamples, vector <int>  bpatterns) {
+void Scheme::setscheme( PatternsCodes &patternscode , string sname, NCS &sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
 	patterns = bpatterns;
 	samples = bsamples;
@@ -81,7 +81,7 @@ void Scheme::simplify(PatternsCodes &patternscode) {
 
 
 
-Scheme::Scheme(PatternsCodes &patternscode, string sname, NCS sncs, int  bsamples, vector <int>  bpatterns) {
+Scheme::Scheme(PatternsCodes &patternscode, string sname, NCS &sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
 	patterns = bpatterns;
 	samples = bsamples;
