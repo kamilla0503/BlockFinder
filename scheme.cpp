@@ -250,19 +250,19 @@ Scheme_compact::Scheme_compact(Scheme &scheme) {
 string Scheme_compact::full_str(PatternsCodes &patternscode) {
     string header= "[ELB ";
     string all_p = "";
-    string sv = "   [SV";
+    string sv = "[SV";
     string s;
 
     header = header + "samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n";
     for (int int_simple : simplified) {
       sv = sv + " "+ to_string(int_simple);
     }
-    sv = sv + "]\n";
+    sv = sv + " ]\n";
     for (int i : patterns) {
         all_p = all_p + patternscode.patterns[i] + "\n";
     }
-    //s = header + sv + all_p;
-    s = header + all_p;
+    s = header + sv + all_p;
+    //s = header + all_p;
     return s;
 }
 
