@@ -56,7 +56,7 @@ public:
 	void check_max_depth();
 	void find_schemes();
 	void blockfinder_finished();
-	BlockFinder(int bsamples, NCS bncs, int bmin_depth, int bmin_t_free);
+	BlockFinder(int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, bool generation=true);
 	//bfm? 
 
 
@@ -65,7 +65,7 @@ public:
 
 
 
-void find_schemes (int id,   int bsamples, NCS bncs, int bmin_depth, int bmin_t_free, int numbertask, vector <int> counter_start = {}, vector <int> counter_end ={} );
+void find_schemes (int id,   int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, int numbertask, PatternsCodes &patternscode, vector <string> &patterns_listl, vector <int> &patterns, vector <int> counter_start = {}, vector <int> counter_end ={} );
 
 
 void find (const BlockFinder b);

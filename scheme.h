@@ -16,7 +16,7 @@ public:
 
 	bool good;
 	Scheme();
-	Scheme(PatternsCodes &patternscode, string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
+	Scheme(PatternsCodes &patternscode, string sname , NCS &sncs , int  bsamples = 0, vector <int>  bpatterns = {});
 
         // Scheme( string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
 
@@ -29,7 +29,7 @@ public:
 	bool try_pattern(int  new_pattern, PatternsCodes &patternscode);
 	Scheme direct_product(Scheme scheme);
 	string full_str(PatternsCodes &patternscode);
-	void setscheme(PatternsCodes &patternscode, string sname = "", NCS sncs = NCS(), int  bsamples = 0, vector <int>  bpatterns = {});
+	void setscheme(PatternsCodes &patternscode, string sname, NCS &sncs , int  bsamples = 0, vector <int>  bpatterns = {});
 
 	bool operator<(const Scheme & t2);
 };

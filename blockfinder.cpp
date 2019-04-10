@@ -1,6 +1,6 @@
 #include"blockfinder.h"
 
-BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, int bmin_t_free){ 
+BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, bool generation){
    samples = bsamples;
    ncs = bncs;
    min_depth = bmin_depth;
@@ -17,27 +17,27 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, int bmin_t_fre
    if (min_depth <= 1) {
       min_depth = 2;
    }
+    if(generation) {
+        patterns_listl = generate_patterns(samples);
 
-   patterns_listl = generate_patterns(samples);
-
-   patterns.push_back({});
-   for (int i =0; i<patterns_listl.size(); i++){
-       patterns[0].push_back(i);
-   }
-
+        patterns.push_back({});
+        for (int i = 0; i < patterns_listl.size(); i++) {
+            patterns[0].push_back(i);
+        }
+    }
    //patterns.push_back(generate_patterns(samples ));
    counter.push_back(0); 
    results_found = 0; 
    max_depth = 0;
    iterator = 0;
    //code_table.setPatternsCodes(patterns, ncs);
+    if (generation) {
+        code_table.setPatternsCodes(patterns_listl, ncs);
+        cout << "Code Table generated, " << code_table.n_patterns <<
+             " patterns, " << code_table.n_simplified << " simplified" << endl;
 
-   code_table.setPatternsCodes(patterns_listl, ncs);
-   cout<<"Code Table generated, "<<code_table.n_patterns<<
-     " patterns, "<<code_table.n_simplified<<" simplified"<<endl;
-
-
-   scheme.setscheme(code_table,"1", ncs, samples, {});
+    }
+   scheme.setscheme(code_table,"1", bncs, samples, {});
    
    out1 = "";
    start_cpu_time = clock();
@@ -48,9 +48,12 @@ BlockFinder::BlockFinder( int bsamples, NCS bncs, int bmin_depth, int bmin_t_fre
 }
 
 
-void find_schemes ( int id,  int bsamples, NCS bncs, int bmin_depth, int bmin_t_free, int numbertask, vector <int> counter_start, vector <int> counter_end  ) {
+void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, int numbertask,PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, vector <int> counter_start, vector <int> counter_end ) {
 
-    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free )   ;
+    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, false )   ;
+    b.patterns_listl=patterns_listl1;
+    b.patterns.push_back(patterns1);
+    b.code_table=patternscode;
 
     b.recover_from_counters(counter_start, numbertask);
     b.maincycle(counter_start, counter_end);
