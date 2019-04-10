@@ -322,7 +322,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
 
 
-void BlockFinder::create_tasks() {
+void BlockFinder::create_tasks(int parallel_depth, int  task_size ) {
     vector<int> patternscurrent, next_patterns;
     int start_point;
     int patterns_left;
@@ -379,22 +379,10 @@ void BlockFinder::create_tasks() {
         if (patterns_left == 0) {
             if (scheme.patterns.size() >= min_depth) {
                 save_result();
-/**
-            cout << "block 1" << endl;
-                cout << " save " << endl;
-                for (int c: counter){
-                    cout << c<< " ";
 
-
-                }
-
-                cout << endl;**/
 
             }
             go_back();
-
-            // temporary break;
-            //break;
 
 
             continue;

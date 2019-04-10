@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	string name_ncs;
-	int begin, end, samples, min_depth;
+	int begin, end, samples, min_depth, task_size, depth_parallel;
 	int auto_min_t_free = -1;
 	cout << "started " << argc << endl;
 	if (argc <= 1) {
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 
 		return -1;
 	}
-	else if(argc ==4){
+	else if(argc ==6){
 
 		name_ncs = argv[1];
 		stringstream convert(argv[2]);
@@ -31,8 +31,14 @@ int main(int argc, char *argv[]) {
 		convertdepth >> min_depth;
 		cout << "readed" << endl;
 
+        stringstream convertp(argv[4]);
+        convertp >> depth_parallel;
+
+
 		NCS ncs = get_NCS(name_ncs);
 		//cout << "////" << endl;
+        stringstream convertt(argv[5]);
+        convertt >> task_size;
 
 		cout << "NCS with name "<<ncs.name << " generated" << endl;
 		if(ncs.name=="ALT12" && samples == 3){
@@ -61,7 +67,7 @@ int main(int argc, char *argv[]) {
         ofstream taskfile;
 
 	cout<<"CREATE TASKS STARTED "<<endl;
-        b.create_tasks();
+        b.create_tasks(depth_parallel, task_size);
 	cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
 
 	//BlockFinder test(samples, ncs, min_depth, auto_min_t_free);

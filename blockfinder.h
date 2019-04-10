@@ -9,16 +9,16 @@ public:
 	int min_depth;
 	Scheme scheme;
 	//Scheme scheme("1", ncs, samples, {});
-    void create_tasks(  );
+    void create_tasks( int parallel_depth, int  task_size );
     //vector <string> patterns; //temporary
 	//new?
 	vector <vector <int>> patterns;
 	vector <string> patterns_listl;
 	int depth;
 	int max_depth;
-	int parallel_depth=1;
+	//int parallel_depth=1;
 
-	int task_size=100;
+	//int task_size=100;
 	int  task_id;    /* Number of task to be executed              */
 	string run_name;
     	vector <Task4run> tasks;
