@@ -37,7 +37,7 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
              " patterns, " << code_table.n_simplified << " simplified" << endl;
 
     }
-   scheme.setscheme(code_table,"1", bncs, samples, {});
+   scheme.setscheme(&code_table,"1", &bncs, samples, {});
    
    out1 = "";
    start_cpu_time = clock();
@@ -242,7 +242,7 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
 
 
 
-      scheme.add_pattern(patternscurrent[counter[depth]], code_table);
+      scheme.add_pattern(patternscurrent[counter[depth]]);
       if (patterns_left < (min_depth - depth - 1)   ) {
          go_back();
          continue;
@@ -371,7 +371,7 @@ void BlockFinder::create_tasks() {
 
 
 
-        scheme.add_pattern(patternscurrent[counter[depth]], code_table);
+        scheme.add_pattern(patternscurrent[counter[depth]]);
         if (patterns_left < (min_depth - depth - 1)   ) {
             go_back();
             continue;
@@ -512,7 +512,7 @@ void BlockFinder::recover_from_counters( const vector <int> & recover_counters, 
 
       back_up_schemes.push_back(scheme);
 
-      scheme.add_pattern(current_patterns[recover_counters[c]], code_table);
+      scheme.add_pattern(current_patterns[recover_counters[c]]);
 
       get_next_patterns(current_patterns, current_patterns.size()-recover_counters[c]-1, recover_counters[c]+1, new_patterns);
 
@@ -599,7 +599,7 @@ void BlockFinder::check_max_depth() {
 void BlockFinder::get_next_patterns(vector <int> & patterns1, int patterns_left, int  start_point, vector<int> & result_next_patterns) {
    result_next_patterns = {};
    for (int i = 0; i < patterns_left; i++)  {
-      if( scheme.try_pattern(patterns1[i + start_point], code_table)) {
+      if( scheme.try_pattern(patterns1[i + start_point])) {
          result_next_patterns.push_back(patterns1[i + start_point]);
       }
    }
@@ -648,9 +648,10 @@ void BlockFinder::save_result() {
    int depth_of_scheme;
    depth_of_scheme= scheme.patterns.size();
    Scheme_compact new_scheme;
-   new_scheme.samples=scheme.samples;
-   new_scheme.patterns=scheme.patterns;
-   new_scheme.simplified=scheme.simplified;
+   new_scheme.code_tab_ptr = scheme.code_tab_ptr;
+   new_scheme.samples      = scheme.samples;
+   new_scheme.patterns     = scheme.patterns;
+   new_scheme.simplified   = scheme.simplified;
    //cout << "see new scheme " << new_scheme.patterns[0] << endl;
    //new_scheme = scheme;
    new_scheme.sort();
@@ -721,7 +722,7 @@ void  BlockFinder::write_result(Scheme_compact  new_scheme) {
    results_found = results_found + 1;
    if(result_ofstream.is_open()){
       result_ofstream << "# iterator = " + to_string(iterator) << endl;
-      result_ofstream << new_scheme.full_str(code_table)<<endl;
+      result_ofstream << new_scheme.full_str()<<endl;
       //result_ofstream.flush();
    }
 }
