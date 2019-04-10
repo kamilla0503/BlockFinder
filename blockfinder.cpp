@@ -587,8 +587,8 @@ void BlockFinder::go_parallel() {
 void BlockFinder::check_max_depth() {
    if (depth > max_depth) {
       max_depth = depth;
-      out1 = "[BlockFinder" + to_string(samples) + " ] New max depth:" + to_string(max_depth); 
-      cout<<out1<<endl;
+//      out1 = "[BlockFinder" + to_string(samples) + " ] New max depth:" + to_string(max_depth); 
+//      cout<<out1<<endl;
    }
 
 } 
