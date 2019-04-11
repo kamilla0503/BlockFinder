@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 		}
 		else if(ncs.name=="ALT12" && samples == 4){
 			auto_min_t_free = 16;
-			cout<<"Automatically set min_t_free = 8"<<endl;
+			cout<<"Automatically set min_t_free = 16"<<endl;
 		}else{
 			cout<<"Checks of  min_t_free is swithced off"<<endl;
 		}
@@ -62,6 +62,7 @@ int main(int argc, char *argv[]) {
 
 
 		BlockFinder b(samples, ncs, min_depth, auto_min_t_free);
+		//b.code_table.print_flags();
 
 	unsigned int ncpu = std::thread::hardware_concurrency();
         ctpl::thread_pool p(ncpu);
@@ -101,7 +102,7 @@ int main(int argc, char *argv[]) {
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
 
-            p.push(find_schemes, samples, ncs, min_depth,  -1, numbertask,b.code_table, b.patterns_listl, b.patterns[0], t.counter_start, t.counter_end );
+            p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, numbertask,b.code_table, b.patterns_listl, b.patterns[0], t.counter_start, t.counter_end );
             //break;
            // b_test.maincycle(t.counter_start, t.counter_end);
           //  break ;
