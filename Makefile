@@ -7,7 +7,7 @@ CPPFLAGS=-std=c++11 -O3  -I.
 LDFLAGS=-std=c++11 -O3  -pthread -lboost_system
 LDLIBS=
 
-PROGRAM=blockfinder_simple_int
+PROGRAM=blockfinder
 
 SRCS=ncs.cpp \
      nmr.cpp \
