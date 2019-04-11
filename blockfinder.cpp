@@ -15,7 +15,7 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
    if (min_t_free >= 0) {
       check_t_free = true;
       index_of_type_T = ncs.index_of_labeltype('T');
-      cout<<"index of type T is "<<index_of_type_T<<endl;
+//      cout<<"index of type T is "<<index_of_type_T<<endl;
    } 
    if (min_depth <= 1) {
       min_depth = 2;
