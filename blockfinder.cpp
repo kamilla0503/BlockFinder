@@ -1,5 +1,7 @@
 #include"blockfinder.h"
 
+//#define DEBUG false
+
 BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, bool generation){
    samples = bsamples;
    ncs = bncs;
@@ -648,7 +650,8 @@ void BlockFinder::go_back() {
 }
 
 void BlockFinder::save_result() {
-   if (check_t_free && !(check_have_enought_t_free(scheme, {}))) {
+   vector<int> empty_vec = {};
+   if (check_t_free && !(check_have_enought_t_free(scheme, empty_vec))) {
       return; 
    }
    int depth_of_scheme;
@@ -683,7 +686,14 @@ bool BlockFinder::check_have_enought_t_free(const Scheme & scheme, const vector<
    t2 = code_table.count_type_in_list_of_patterns(patterns_left, index_of_type_T);
    int left_t = get<0>(t2);
    int left_t_free = get<1>(t2);
-   return (scheme_t_free + left_t_free >= min_t_free); 
+   bool result = scheme_t_free + left_t_free >= min_t_free;
+#ifdef DEBUG
+   cout<<"check_have_enought_t_free"<<endl;
+   cout<<"  scheme_t_free= "<<scheme_t_free<<" left_t_free= "<<left_t_free;
+   cout<<" t_free="<<scheme_t_free + left_t_free<<" check = "<<result<<endl;;
+   getchar();
+#endif
+   return (result); 
 }
 
 void PatternsCodes::simplify_list_of_patterns(const vector<int>& list_of_patterns, vector<int>& result) {
@@ -694,32 +704,53 @@ void PatternsCodes::simplify_list_of_patterns(const vector<int>& list_of_pattern
 }
 
 tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(
-    const vector <int>& simplified, int index_of_type) {
+    const vector <int>& arg_simplified, int index_of_type) {
    int count_type = 0;
    int count_all = 0;
    int has_t;
-   for( int sp : simplified) {
-      has_t = 0;
-      if (check_label_in_simplified(sp, index_of_type) )
-        has_t = 1;
-      count_type = count_type + has_t * simplified[sp];
-      count_all = count_all  + simplified[sp];
+#ifdef DEBUG
+   cout<<"count_type_in_list_of_simplified"<<endl;
+#endif
+   for( int s=0; s<n_simplified; s++) {
+      if(!arg_simplified[s])continue;
+      has_t = check_label_in_simplified(s, index_of_type);
+      count_type = count_type + has_t * arg_simplified[s];
+      count_all = count_all  + arg_simplified[s];
+#ifdef DEBUG
+      cout<<"s= "<<setw(3)<<s<<" "<<unique_simplified_patterns[s]<<":"<<setw(2)<<arg_simplified[s]<<" has_t="<<has_t<<endl;
+#endif
    }
+#ifdef DEBUG
+   cout<<"count_type= "<<count_type<<" count_free= "<<count_all - count_type<<endl;
+   getchar();
+#endif
    return  make_tuple(count_type, count_all - count_type);
 }
 
 tuple<int, int > PatternsCodes::count_type_in_list_of_patterns(
-    const vector <int>& patterns, int index_of_type) {
+    const vector <int>& arg_patterns, int index_of_type) {
    int count_type = 0;
    int count_all = 0;
    int has_t;
-   for( int p : patterns) {
+   int p;
+#ifdef DEBUG
+   cout<<"count_type_in_list_of_patterns"<<endl;
+#endif
+   for( int i=0; i< arg_patterns.size(); i++) {
+      p = arg_patterns[i];
       has_t = 0;
       if (check_label_in_pattern(p, index_of_type) )
         has_t = 1;
+#ifdef DEBUG
+      cout<<"p= "<<setw(3)<<p<<" "<<patterns[p]<<" has_t="<<has_t<<endl;
+#endif
       count_type = count_type + has_t;
       count_all = count_all  + 1;
    }
+#ifdef DEBUG
+   cout<<"count_type= "<<count_type<<" count_free= "<<count_all - count_type<<endl;
+   getchar();
+#endif
    return  make_tuple(count_type, count_all - count_type);
 }
 

@@ -40,6 +40,7 @@ public:
     PatternsCodes( vector<string> a_patterns, NCS ncs );
     PatternsCodes();
     void setPatternsCodes(vector<string> a_patterns, NCS a_ncs );
+    void print_flags();
     
     void  simplify_list_of_patterns(const vector<int> & list_of_patterns, vector<int> & result);
     tuple<int, int > count_type_in_list_of_simplified(const vector <int> & simplified, int index_of_type);

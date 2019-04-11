@@ -44,6 +44,32 @@ void PatternsCodes::create_labeltype_flags(){
     }
 }
 
+void PatternsCodes::print_flags(){
+   for(int p=0; p<n_patterns; p++){
+      int s = simple_ints[p];
+      cout<<"p= "<<setw(3)<<p<<" "<<patterns[p]<<" s="<<setw(3)<<s<<" "<<simple_form[s]<<" flags= \'";
+      for(int l=0;l<ncs.label_types.size();l++){
+         if (have_labeltype_pattern_flag[p][l]){
+	     cout<<ncs.label_types[l].name;
+         }else{
+	     cout<<" ";
+         }
+      }
+      cout<<"\'"<<endl;
+   }
+   for(int s=0;s<n_simplified;s++){
+      cout<<"s= "<<setw(3)<<s<<" "<<unique_simplified_patterns[s]<<" flags=\'";
+      for(int l=0;l<ncs.label_types.size();l++){
+	if (have_labeltype_simplified_flag[s][l]){
+	   cout<<ncs.label_types[l].name;
+	}else{
+	  cout<<" ";
+	}
+      }
+      cout<<"\'"<<endl;
+   }
+}
+
 void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs ) {
 
     patterns=a_patterns;

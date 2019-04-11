@@ -3,8 +3,8 @@ CXX=g++
 RM=rm -f
 
 
-CPPFLAGS=-std=c++11 -O3  -I.
-LDFLAGS=-std=c++11 -O3  -pthread -lboost_system
+CPPFLAGS=-std=c++11 -O3 -I.
+LDFLAGS=-std=c++11 -O3 -pthread -lboost_system
 LDLIBS=
 
 PROGRAM=blockfinder
