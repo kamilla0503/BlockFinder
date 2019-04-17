@@ -9,6 +9,7 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
    check_t_free = false; 
    run_task_flag = false;
    create_task_flag = false;
+   check_counter_limits = false;
    task_id = -1;
    depth = 0;  
    min_t_free = bmin_t_free;
@@ -51,15 +52,15 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 }
 
 
-void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, int numbertask,PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, vector <int> counter_start, vector <int> counter_end ) {
+void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run ) {
 
     BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, false )   ;
     b.patterns_listl=patterns_listl1;
     b.patterns.push_back(patterns1);
     b.code_table=patternscode;
 
-    b.recover_from_counters(counter_start, numbertask);
-    b.maincycle(counter_start, counter_end);
+    b.recover_from_counters(task_for_run);
+    b.maincycle(task_for_run);
 
     /*
     for ( auto c : b.scheme.simplified ){
@@ -130,11 +131,9 @@ void BlockFinder::start_blockfinder() {
      cout << " Total number of patterns is  " << patterns[0].size() << endl;
    }
    if(run_task_flag){
-     ostringstream task_id_string;
-     task_id_string<<setw(4)<<setfill('0')<<task_id;
-     results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+task_id_string.str()+"_cpp.elb";
+     results_filename = ncs.name + "_"+to_string(samples)+"_"+to_string(min_depth)+"_"+task.name+"_cpp.elb";
      result_ofstream.open(results_filename);
-     run_name = "[Task" + task_id_string.str() + "]";
+     run_name = "[" + task.name + "]";
    }else{
      results_filename = ncs.name + "_" + to_string(samples) + "_" + to_string(min_depth) + "_cpp.elb";
      result_ofstream.open(results_filename);
@@ -148,103 +147,36 @@ void BlockFinder::start_blockfinder() {
 }
 
 
-void BlockFinder::maincycle( const vector <int> start, const vector <int> end   ) {
+void BlockFinder::maincycle( Task4run & task_for_run   ) {
    vector<int> patternscurrent, next_patterns;
    int start_point;
    int patterns_left; 
    bool flag_t_free;
-   //bool st = false;
-   //vector <int >  ct;
-
 
 //    std::ofstream iterlog;          // поток для записи
 //    iterlog.open("iterlog"+to_string(task_id)+".txt");
 
 
-    bool limits=true;
-    bool check_limits=false;
-    if (start.size()==0 && end.size()==0){
-        limits = false;
-        check_limits=false;
+    task = task_for_run;
+    check_counter_limits=true;
+    if (task.start.size()==0 && task.end.size()==0){
+        check_counter_limits = false;
     }
-    int order = 0;
-
-
-
-
-
-
 
     start_blockfinder();
 
     while (true) {
-        order=0;
-
-        if(limits && counter.size()==end.size()){
-            for (int c=0; c< end.size(); c++ ){
-                if (counter[c]<end[c]){
-                    //order =order+1;
-                    //check_limits=true;
-                    break;
-                }
-                order =order+1;
-            }
-/**
-         if(counter[end.size()-1]>=end.back()){
-            order=order+1;
-
-         }**/
-
-            if (order==end.size()){
-                check_limits=true;
-/*
-                cout << "end while "<< endl;
-                for (int q: counter){
-                    cout << q << " ";
-                }
-
-                cout << endl;
-
-*/
-            }
-
-        }
-
-        if(check_limits){
-            break;
-        }
-
-
-
-
-
-
-
-
-
-
-//        iterlog<<iterator<<" "<<depth<<" : ";
-//          for(int d=0;d<depth+1; d++)
-//            iterlog<<counter[d]<<" ";
-//        iterlog<<endl;
-
+      if( check_counters_reached_the_end_of_task() ){
+         break;
+      }
       next_iteration_output();
- 
       patternscurrent = patterns[depth];
       if (depth == 0 && ( (counter[0] + min_depth )> patternscurrent.size())) {
          break;
       }
       start_point = 1 + counter[depth];
       patterns_left = patternscurrent.size() - start_point;
-
-
-
       back_up_schemes.push_back(scheme);
-
-
-
-
-
       scheme.add_pattern(patternscurrent[counter[depth]]);
       if (patterns_left < (min_depth - depth - 1)   ) {
          go_back();
@@ -253,55 +185,21 @@ void BlockFinder::maincycle( const vector <int> start, const vector <int> end   
       if (patterns_left == 0) {
          if (scheme.patterns.size() >= min_depth) {
             save_result();
-/**
-            cout << "block 1" << endl;
-                cout << " save " << endl;
-                for (int c: counter){
-                    cout << c<< " ";
-
-
-                }
-
-                cout << endl;**/
-
          }
          go_back();
-
-         // temporary break;
-         //break;
-
-
          continue;
       }
       get_next_patterns(patternscurrent, patterns_left, start_point, next_patterns);
-
-//		cout << iterator << " next patterns size : " << next_patterns.size() << endl;
-
-
       flag_t_free = true;
       if (check_t_free) {
          flag_t_free = check_have_enought_t_free(scheme, next_patterns);
       }
       if ( next_patterns.size() != 0 && flag_t_free){
-         
          go_deeper(next_patterns);
       }
       else {
          if (scheme.patterns.size() >= min_depth) {
             save_result();
-
-/**
-                cout << "block 2" << endl;
-                cout << " save " << endl;
-                for (int c: counter){
-                    cout << c<< " ";
-
-
-                }
-
-                cout << endl;**/
-
-
          }
          go_parallel(); 
       }
@@ -334,14 +232,15 @@ void BlockFinder::create_tasks() {
     //vector <int >  ct;
 
     create_task_flag = true;
-    int task_counter=0;
+    int task_counter = 0;
+    int task_number  = 0;
     cout<<"create_tasks: Starting with parallel_depth= "<<parallel_depth<<" and task_size= "<<task_size<<endl;
 
     vector <Task4run> t;
     //Task4run task1({0}, {});
     Task4run task1;
-    task1.counter_start={0};
-    task1.counter_end={};
+    task1.start={0};
+    task1.end={};
     tasks.push_back(task1);
 
     int kt=0;
@@ -367,13 +266,7 @@ void BlockFinder::create_tasks() {
         start_point = 1 + counter[depth];
         patterns_left = patternscurrent.size() - start_point;
 
-
-
         back_up_schemes.push_back(scheme);
-
-
-
-
 
         scheme.add_pattern(patternscurrent[counter[depth]]);
         if (patterns_left < (min_depth - depth - 1)   ) {
@@ -412,17 +305,9 @@ void BlockFinder::create_tasks() {
         }
         if ( next_patterns.size() != 0 && flag_t_free){
 
-
-
             if(depth == parallel_depth){
 
-
                 //out << "back up " << endl;
-
-
-
-
-
 
                 task_counter=task_counter+1;
                 //cout << "this depth " << endl;
@@ -430,13 +315,16 @@ void BlockFinder::create_tasks() {
 
                 if (task_counter%task_size==0){
 
-                    tasks.back().counter_end = counter;
+                    tasks.back().end = counter;
 
                     //Task4run task1(counter, {});
-                    task1.counter_start=counter;
-                    task1.counter_end={};
+                    task1.start=counter;
+                    task1.end={};
+		    task1.number = task_number;
+		    task1.update_name();
 
                     tasks.push_back(task1);
+		    task_number++;
 
 
 
@@ -470,7 +358,7 @@ void BlockFinder::create_tasks() {
         check_max_depth();
     }
 
-   tasks.back().counter_end=counter;
+   tasks.back().end=counter;
 
 
    ofstream file1("tasksend.txt");
@@ -478,12 +366,12 @@ void BlockFinder::create_tasks() {
 
    for (Task4run c: tasks){
 
-      for (int i: c.counter_start){
+      for (int i: c.start){
          file1 <<setw(3)<< i << " ";
 
       }
       file1<<" : ";
-      for (int i: c.counter_end){
+      for (int i: c.end){
          file1 <<setw(3)<< i << " ";
 
       }
@@ -500,13 +388,30 @@ void BlockFinder::create_tasks() {
 }
 
 
+bool BlockFinder::check_counters_reached_the_end_of_task()
+{
+    if(!check_counter_limits)return(false);
+    
+    bool end_of_task = false;
+    int order=0;
+    
+    if(counter.size()==task.end.size()){
+       for (int c=0; c< task.end.size(); c++ ){
+          if (counter[c]<task.end[c]){
+              break;
+          }
+          order =order+1;
+       }
+       if (order==task.end.size()){
+          end_of_task=true;
+       }
+    }
+    return end_of_task;
+}
 
-
-
-
-
-
-
+void BlockFinder::recover_from_counters( const Task4run & task_for_recover ){
+   recover_from_counters(task_for_recover.start, task_for_recover.number);
+}
 
 void BlockFinder::recover_from_counters( const vector <int> & recover_counters, int numbertask){
 

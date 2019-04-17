@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
 
-            p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, numbertask,b.code_table, b.patterns_listl, b.patterns[0], t.counter_start, t.counter_end );
+            p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t );
             //break;
            // b_test.maincycle(t.counter_start, t.counter_end);
           //  break ;

@@ -171,9 +171,9 @@ bool Scheme::try_pattern(int  new_pattern) {
 	}
 	set <int> new_codes;
 	int code_1, code_2;
-	if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
+	/*if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
 		return false;
-	}
+	}*/
 	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
    	int n = new_pattern;
 	int m = code_tab_ptr->patterns.size();
