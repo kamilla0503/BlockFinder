@@ -4,8 +4,8 @@ RM=rm -f
 
 
 CPPFLAGS=-std=c++11 -O3 -I.
-LDFLAGS=-std=c++11 -O3 -L/usr/lib/x86_64-linux-gnu 
-LDLIBS=-lboost_thread -lboost_system -lpthread
+LDFLAGS=-std=c++11 -O3 -pthread 
+LDLIBS=-lboost_thread -lboost_system 
 
 PROGRAM=blockfinder
 
