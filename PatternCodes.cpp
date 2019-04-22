@@ -135,4 +135,17 @@ void PatternsCodes::create_codes_table() {
             codes[i*n_patterns+j]=code_number;
         }
     }
+
+    /**
+    for (int i=0; i<n_patterns; i++){
+
+        for (int j=0; j<n_patterns; j++){
+           cout << codes[i*n_patterns+j] << " " ;
+
+
+        }
+        cout << endl;
+    } **/
+
+
 }

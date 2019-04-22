@@ -8,8 +8,10 @@ public:
 	PatternsCodes *code_tab_ptr; 
 	int samples;
 	vector <int> patterns;
-	set <int> codes;
-	set <string> new_codes;
+	//set <int> codes;
+	valarray <bool> codes;
+	//set <string> new_codes;
+	valarray <bool> new_codes;
 //	map <string, int> simplified;
         vector<int> simplified;
 

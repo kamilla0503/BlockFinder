@@ -30,10 +30,21 @@ Scheme::Scheme() {
 }
 
 bool Scheme::check_codes() {
-	set <int> codes;
+	//set <int> codes;
 	int code;
-	bool first = true;
+	bool first = true; // ???????????
+    //codes.resize(code_tab_ptr->n_patterns);
+    //valarray <bool> codes(false, code_tab_ptr->n_patterns); // ???
+    int w = code_tab_ptr->codes.max()+2;
+    codes.resize( w );
+	for (int i =0; i< w; i++){
+		codes[i]= false;
 
+	}
+
+
+    //cout << " check codes[1]" << codes[1] << endl;
+    //codes= codes.shift(false);
 	for (int i: patterns) {
 		for ( int j : patterns) {
 			//code =  patternscode.codes[ patternscode.patterns.size()*i  +j]; //!!!
@@ -42,11 +53,12 @@ bool Scheme::check_codes() {
 				first = false;
 				continue;
 			}
-			else if (codes.find(code) != codes.end()) {
+			else if (codes[code]==true) {
 				return false;
 			}
 			else {
-				codes.insert(code);
+				//codes.insert(code);
+				codes[code] = true;
 			}
 		}
 	}
@@ -60,12 +72,23 @@ void Scheme::setscheme( PatternsCodes *patternscode , string sname, NCS *sncs, i
 	samples = bsamples;
 	code_tab_ptr = patternscode;
 	ncs_ptr = sncs;
+	//cout << " this " <<endl;
+	int w = code_tab_ptr->codes.max()+2;
+	//valarray <bool> codes(code_tab_ptr->n_patterns);
+	//codes.resize(w);
+	//valarray <bool> new_codes( code_tab_ptr->n_patterns);
+	new_codes.resize(w  );
+	for (int i =0; i< w; i++){
+		//codes[i]= false;
+		new_codes[i]= false;
 
-	set <string> codes; 
+	}
+	//cout << " or this " << endl;
+	//set <string> codes;
 	good = check_codes();
 	//map <string, int> simplified;
 	simplify();
-	set <string> new_codes;
+	//set <string> new_codes;
 	//code_table.setPatternsCodes(patterns, ncs);
 
 }
@@ -88,10 +111,10 @@ Scheme::Scheme(PatternsCodes *patternscode, string sname, NCS *sncs, int  bsampl
 	samples = bsamples;
 	code_tab_ptr = patternscode; 
 	ncs_ptr  = sncs;
-	set <string> codes; //
+	valarray <bool> codes; //
 	good = check_codes();
 	simplify();
-	set <string> new_codes;
+	valarray <bool> new_codes;
 	//code_table.setPatternsCodes(patterns, ncs);
 
 }
@@ -114,18 +137,6 @@ bool Scheme::check_patterns(vector <string> patterns) {
 	return true;
 }
 
-/**void Scheme::sort() {
-	string temp_pattern;
-	for (int i = 0; i < (patterns.size() - 1); i++) {
-		for (int j = 0; j < (patterns.size() - i - 1); j++) {
-			if (pattern_bigger(patterns[i], patterns[i + j + 1])) {
-				temp_pattern = patterns[i];
-				patterns[i] = patterns[i + j + 1];
-				patterns[i + j + 1] = temp_pattern;
-			}
-		}
-	}
-}**/
 
 void Scheme::sort(){
 
@@ -148,11 +159,14 @@ void Scheme::add_new_codes(int new_pattern) {
 	for ( int i :patterns) {
 		//codes.insert(patternscode.codes[i*m+n]);
 		//codes.insert(patternscode.codes[n*m+i]);
-		codes.insert(code_tab_ptr->calc_code_fast(i,n));
-		codes.insert(code_tab_ptr->calc_code_fast(n,i));
+		//codes.insert(code_tab_ptr->calc_code_fast(i,n));
+		//codes.insert(code_tab_ptr->calc_code_fast(n,i));
+		//cout << " no " << code_tab_ptr->calc_code_fast(i,n) << " " <<code_tab_ptr->calc_code_fast(n,i) << endl;
+		codes[code_tab_ptr->calc_code_fast(i,n)] = true;
+		codes[code_tab_ptr->calc_code_fast(n,i) ] = true;
 	}
-
-	codes.insert(code_tab_ptr->calc_code_fast(n,n));
+    codes [  code_tab_ptr->calc_code_fast(n,n)] = true;
+	//codes.insert(code_tab_ptr->calc_code_fast(n,n));
 
 }
 
@@ -169,7 +183,7 @@ bool Scheme::try_pattern(int  new_pattern) {
 	if (good == false) {
 		return false;
 	}
-	set <int> new_codes;
+	//set <int> new_codes;
 	int code_1, code_2;
 	/*if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
 		return false;
@@ -185,43 +199,28 @@ bool Scheme::try_pattern(int  new_pattern) {
 		code_1 = code_tab_ptr->calc_code_fast(patterns[i],n);
 		code_2 = code_tab_ptr->calc_code_fast(n,patterns[i]);
 		
-		if (codes.find(code_1) != codes.end() || codes.find(code_2) != codes.end() || (code_2 == code_1) || new_codes.find(code_1) != new_codes.end() || new_codes.find(code_2) != new_codes.end()) {
+		if (codes[code_1]==true || codes[code_2]==true || (code_2 == code_1) || new_codes[code_1]==true || new_codes[code_2]==true) {
 
 			return false;
 		}
 		else {
-			new_codes.insert(code_1);
-			new_codes.insert(code_2);
+			new_codes[code_1]=true;
+			new_codes[code_2]=true;
 		}
 
 	}
 	//int self_code = patternscode.codes[n*m+n];
 	int self_code = code_tab_ptr->calc_code_fast(n,n);
-	if (codes.find(self_code) != codes.end() || new_codes.find(self_code) != new_codes.end()) {
+	if (codes[self_code] ==true|| new_codes[self_code]==true) {
 		return false;
 
 	}
 	else {
-		new_codes.insert(self_code);
+		new_codes[self_code]=true;
 	}
 	return true;
 }
 
-/**
-Scheme Scheme::direct_product(Scheme scheme) {
-	vector <string>  new_patterns;
-
-	for (string pattern_1 : patterns) {
-		for (string pattern_2 : scheme.patterns) {
-			new_patterns.push_back(pattern_1 + pattern_2);
-		}
-	}
-	string new_name = name + "_X_" + scheme.name;
-	samples = new_patterns[0].size(); // n or o 
-	Scheme new_scheme = Scheme(new_name, ncs, samples, new_patterns);
-	return new_scheme;
-}
-**/
 
 string Scheme::full_str() {
 	string s = "";
