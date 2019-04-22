@@ -2,7 +2,7 @@
 
 //#define DEBUG false
 
-BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, bool generation){
+BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, bool generation){
    samples = bsamples;
    ncs = bncs;
    min_depth = bmin_depth;
@@ -41,6 +41,9 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
              " patterns, " << code_table.n_simplified << " simplified" << endl;
 
     }
+    else{
+        code_table= patternscode;
+    }
    scheme.setscheme(&code_table,"1", &bncs, samples, {});
    
    out1 = "";
@@ -54,10 +57,10 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 
 void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run ) {
 
-    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, false )   ;
+    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
     b.patterns_listl=patterns_listl1;
     b.patterns.push_back(patterns1);
-    b.code_table=patternscode;
+   // b.code_table=patternscode;
 
     b.recover_from_counters(task_for_run);
     b.maincycle(task_for_run);

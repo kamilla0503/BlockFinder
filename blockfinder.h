@@ -62,7 +62,7 @@ public:
         void check_max_depth();
         void find_schemes();
         void blockfinder_finished();
-        BlockFinder(int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, bool generation=true);
+        BlockFinder(int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes & patternscode, bool generation=true );
         //bfm? 
 
 

@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
 		}
 
 
-
-		BlockFinder b(samples, ncs, min_depth, auto_min_t_free);
+        PatternsCodes empty_table;
+		BlockFinder b(samples, ncs, min_depth, auto_min_t_free, empty_table);
 		//b.code_table.print_flags();
 
 

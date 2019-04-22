@@ -35,9 +35,9 @@ bool Scheme::check_codes() {
 	bool first = true; // ???????????
     //codes.resize(code_tab_ptr->n_patterns);
     //valarray <bool> codes(false, code_tab_ptr->n_patterns); // ???
-    int w = code_tab_ptr->codes.max()+2;
-    codes.resize( w );
-	for (int i =0; i< w; i++){
+    int nCodes = code_tab_ptr->n_codes;
+    codes.resize( nCodes );
+	for (int i =0; i< nCodes; i++){
 		codes[i]= false;
 
 	}
@@ -73,12 +73,12 @@ void Scheme::setscheme( PatternsCodes *patternscode , string sname, NCS *sncs, i
 	code_tab_ptr = patternscode;
 	ncs_ptr = sncs;
 	//cout << " this " <<endl;
-	int w = code_tab_ptr->codes.max()+2;
+	int nCodes = code_tab_ptr->n_codes;
 	//valarray <bool> codes(code_tab_ptr->n_patterns);
-	//codes.resize(w);
+	//codes.resize(nCodes);
 	//valarray <bool> new_codes( code_tab_ptr->n_patterns);
-	new_codes.resize(w  );
-	for (int i =0; i< w; i++){
+	new_codes.resize(nCodes  );
+	for (int i =0; i< nCodes; i++){
 		//codes[i]= false;
 		new_codes[i]= false;
 
