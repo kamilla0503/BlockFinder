@@ -587,8 +587,11 @@ void BlockFinder::save_result() {
 
 bool BlockFinder::check_have_enought_t_free(const Scheme & scheme, const vector<int> &  patterns_left) {
    tuple <int, int> t;
-   t = code_table.count_type_in_list_of_simplified(scheme.simplified, index_of_type_T); 
-   int scheme_t = get<0>(t); 
+   vector <int> simplified_scheme;
+   simplified_scheme.assign( begin(scheme.simplified), end(scheme.simplified)  );
+  // t = code_table.count_type_in_list_of_simplified(scheme.simplified, index_of_type_T);
+   t = code_table.count_type_in_list_of_simplified( simplified_scheme, index_of_type_T);
+   int scheme_t = get<0>(t);
    int scheme_t_free = get<1>(t); 
    tuple <int, int> t2; 
    t2 = code_table.count_type_in_list_of_patterns(patterns_left, index_of_type_T);
@@ -611,8 +614,7 @@ void PatternsCodes::simplify_list_of_patterns(const vector<int>& list_of_pattern
    }
 }
 
-tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(
-    const vector <int>& arg_simplified, int index_of_type) {
+tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(const vector <int>& arg_simplified, int index_of_type) {
    int count_type = 0;
    int count_all = 0;
    int has_t;

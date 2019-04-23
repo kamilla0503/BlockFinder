@@ -13,7 +13,8 @@ public:
 	//set <string> new_codes;
 	valarray <bool> new_codes;
 //	map <string, int> simplified;
-        vector<int> simplified;
+        //valarray<int> simplified;
+    vector <int> simplified;
 
 	//PatternsCodes code_table;
 
@@ -44,9 +45,10 @@ class Scheme_compact{
 public:
 	int samples;
 	PatternsCodes *code_tab_ptr;
-	vector <int> patterns;
-	vector <int> simplified;
-
+	//valarray <int> patterns;
+	//valarray <int> simplified;
+    vector <int> patterns;
+    vector <int> simplified;
     	Scheme_compact();
 	Scheme_compact(Scheme &scheme);
 	void sort();

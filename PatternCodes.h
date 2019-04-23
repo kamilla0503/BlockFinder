@@ -45,7 +45,7 @@ public:
     
     void  simplify_list_of_patterns(const vector<int> & list_of_patterns, vector<int> & result);
     tuple<int, int > count_type_in_list_of_simplified(const vector <int> & simplified, int index_of_type);
-    tuple<int, int > count_type_in_list_of_patterns(const vector<int> &  patterns, int index_of_typr);
+    tuple<int, int > count_type_in_list_of_patterns(const vector <int> &  patterns, int index_of_typr);
 private:
     void create_simplified_table();
     void create_labeltype_flags();

@@ -1,8 +1,11 @@
 #include"scheme.h"
 //#include<algorithm>
 
+
+
+
 bool operator<(const Scheme& t1, const Scheme& t2) {
-	return (t1.simplified < t2.simplified);
+    return (t1.simplified < t2.simplified);
 }
 
 
@@ -13,11 +16,11 @@ bool operator<(const Scheme_compact& t1, const Scheme_compact& t2) {
 
 
 bool Scheme::operator<(const Scheme& t2) {
-	return (this->simplified < t2.simplified);
+    return (this->simplified < t2.simplified);
 }
 
 bool operator==(const Scheme& t1, const Scheme& s2) {
-	return (t1.simplified == s2.simplified);
+    return (t1.simplified == s2.simplified);
 }
 
 
@@ -25,6 +28,72 @@ bool operator==(const Scheme_compact& t1, const Scheme_compact& s2) {
     return (t1.simplified == s2.simplified);
 }
 
+
+
+/**
+bool operator<(const Scheme& t1, const Scheme& t2) {
+	//return (t1.simplified < t2.simplified);
+
+	for (int i=0; i<t1.simplified.size(); i++ ){
+		if (t1.simplified[i]>t2.simplified[i]){
+			return false;
+		}
+	}
+	return true;
+
+
+}
+
+
+bool operator<(const Scheme_compact& t1, const Scheme_compact& t2) {
+    //return (t1.simplified < t2.simplified);
+
+	for (int i=0; i<t1.simplified.size(); i++ ){
+		if (t1.simplified[i]>t2.simplified[i]){
+			return false;
+		}
+	}
+	return true;
+
+
+}
+
+
+
+bool Scheme::operator<(const Scheme& t2) {
+	//return (this->simplified < t2.simplified);
+
+	for (int i=0; i<t2.simplified.size(); i++ ){
+		if (this->simplified[i]>t2.simplified[i]){
+			return false;
+		}
+	}
+	return true;
+
+
+}
+
+bool operator==(const Scheme& t1, const Scheme& s2) {
+	//bool flag = true;
+	for (int i=0; i<t1.simplified.size(); i++ ){
+		if (t1.simplified[i]!=s2.simplified[i]){
+			return false;
+		}
+	}
+	return true;
+}
+
+
+bool operator==(const Scheme_compact& t1, const Scheme_compact& s2) {
+    //return (t1.simplified == s2.simplified);
+	for (int i=0; i<t1.simplified.size(); i++ ){
+		if (t1.simplified[i]!=s2.simplified[i]){
+			return false;
+		}
+	}
+	return true;
+}
+**/
 Scheme::Scheme() {
 	patterns={};
 }
@@ -68,7 +137,8 @@ bool Scheme::check_codes() {
 
 void Scheme::setscheme( PatternsCodes *patternscode , string sname, NCS *sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
-	patterns = bpatterns;
+//	valarray<int> patterns( bpatterns.data(), bpatterns.size());
+patterns=bpatterns;
 	samples = bsamples;
 	code_tab_ptr = patternscode;
 	ncs_ptr = sncs;
@@ -77,12 +147,12 @@ void Scheme::setscheme( PatternsCodes *patternscode , string sname, NCS *sncs, i
 	//valarray <bool> codes(code_tab_ptr->n_patterns);
 	//codes.resize(nCodes);
 	//valarray <bool> new_codes( code_tab_ptr->n_patterns);
-	new_codes.resize(nCodes  );
-	for (int i =0; i< nCodes; i++){
+	new_codes.resize(nCodes , false );
+	/**for (int i =0; i< nCodes; i++){
 		//codes[i]= false;
 		new_codes[i]= false;
 
-	}
+	}**/
 	//cout << " or this " << endl;
 	//set <string> codes;
 	good = check_codes();
@@ -98,6 +168,7 @@ void Scheme::simplify() {
 	//string simple_pattern;
 	//simplified = {};
 	simplified.assign(code_tab_ptr->n_simplified, 0);
+	//simplified.resize(code_tab_ptr->n_patterns, 0); //?
 	for (int pattern : patterns) {
 	   simplified[code_tab_ptr->simple_ints[pattern]]++;
 	}
@@ -107,7 +178,10 @@ void Scheme::simplify() {
 
 Scheme::Scheme(PatternsCodes *patternscode, string sname, NCS *sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
-	patterns = bpatterns;
+	//patterns = bpatterns;
+
+//	valarray<int> patterns( bpatterns.data(), bpatterns.size());
+    patterns = bpatterns;
 	samples = bsamples;
 	code_tab_ptr = patternscode; 
 	ncs_ptr  = sncs;
@@ -183,14 +257,14 @@ bool Scheme::try_pattern(int  new_pattern) {
 	if (good == false) {
 		return false;
 	}
-	//set <int> new_codes;
+	new_codes.resize(code_tab_ptr->n_codes, false);
 	int code_1, code_2;
 	/*if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
 		return false;
 	}*/
 	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
    	int n = new_pattern;
-	int m = code_tab_ptr->patterns.size();
+//	int m = code_tab_ptr->patterns.size();
 	for (int i=0; i<patterns.size(); i++) {
 		//code_1 = patternscode.codes[patterns[i]*m+n];
 
