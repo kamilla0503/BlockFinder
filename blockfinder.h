@@ -71,7 +71,7 @@ public:
 
 
 
-unsigned long long find_schemes (int id,   int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl, vector <int> &patterns, Task4run & task_for_run );
+void find_schemes (int id,   int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl, vector <int> &patterns, Task4run & task_for_run );
 
 
 void find (const BlockFinder b);

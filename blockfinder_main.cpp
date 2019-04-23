@@ -72,9 +72,11 @@ int main(int argc, char *argv[]) {
 		//b.code_table.print_flags();
 
 
-        ofstream taskfile;
 
 	cout<<"CREATE TASKS STARTED "<<endl;
+
+
+
         b.create_tasks();
 	cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
 
@@ -98,36 +100,34 @@ int main(int argc, char *argv[]) {
 	clock_gettime(CLOCK_MONOTONIC, &wall_clock_start);
 
 
- 	cout << endl;
+		cout << endl;
+		int numbertask=0;
 	//	std::future<void> qw = p.push(find_schemes,
 	cout<<"RUNNING ALL "<<to_string(b.tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
 
-
-	//future<unsigned long long> test0 = p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], b.tasks[0] );
-	vector< future<unsigned long long> > task_results;
-
         for (Task4run t : b.tasks){
-            task_results.push_back(
-		p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t )
-	    );
-        }
+            //cout << " numbertask : " << numbertask<< endl;
+			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
+			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
-	unsigned long long total_results;
-	for(int count_valid_tasks = 0; count_valid_tasks< b.tasks.size() ; ){
-	  for(auto res : task_results)
-	    if(res.valid()){
-		total_results += res.get();
-		count_valid_tasks++;
-		cout<<"Total "<<setw(4)<<count_valid_tasks<<"tasks finished, "<<total_results<<" results found"<<endl;
-	    }
-	}
-	
+
+            p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t );
+            //break;
+           // b_test.maincycle(t.counter_start, t.counter_end);
+          //  break ;
+
+            numbertask=numbertask+1;
+
+
+
+
+        }
 
 
 
 	// Wait for all jobs to finish
 	p.stop(true);
-	cout<<"EXECUTION OF ALL "<<to_string(b.tasks.size())<<" TASKS FINISHED"<<endl;
+	cout<<"EXECUTION OF ALL "<<to_string(numbertask)<<" TASKS FINISHED"<<endl;
 	cpu_usage_finish = clock();
 	clock_gettime(CLOCK_MONOTONIC, &wall_clock_finish);
 

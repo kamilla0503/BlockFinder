@@ -55,7 +55,7 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 }
 
 
-unsigned long long find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run ) {
+void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run ) {
 
     BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
     b.patterns_listl=patterns_listl1;
@@ -70,7 +70,7 @@ unsigned long long find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_dep
         cout << c.first << " " << c.second << endl;
     }*/
 
-    return b.results_found;
+
 }
 
 
