@@ -3,11 +3,11 @@ CXX=g++
 RM=rm -f
 
 
-CPPFLAGS=-std=c++11 -O0 -g -pg -I.
-LDFLAGS=-std=c++11 -O0 -g -pg -pthread
+CPPFLAGS=-std=c++11 -O3 -I.
+LDFLAGS=-std=c++11 -O3 -pthread
 LDLIBS=-lboost_thread -lboost_system 
 
-PROGRAM=blockfinder
+PROGRAM=blockfinder_valarray
 
 SRCS=ncs.cpp \
      nmr.cpp \

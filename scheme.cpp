@@ -99,18 +99,9 @@ Scheme::Scheme() {
 }
 
 bool Scheme::check_codes() {
-	//set <int> codes;
 	int code;
-	bool first = true; // ???????????
-    //codes.resize(code_tab_ptr->n_patterns);
-    //valarray <bool> codes(false, code_tab_ptr->n_patterns); // ???
-    int nCodes = code_tab_ptr->n_codes;
-    codes.resize( nCodes );
-	for (int i =0; i< nCodes; i++){
-		codes[i]= false;
-
-	}
-
+	bool first = true; 
+	codes = false;
 
     //cout << " check codes[1]" << codes[1] << endl;
     //codes= codes.shift(false);
@@ -138,37 +129,21 @@ bool Scheme::check_codes() {
 void Scheme::setscheme( PatternsCodes *patternscode , string sname, NCS *sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
 //	valarray<int> patterns( bpatterns.data(), bpatterns.size());
-patterns=bpatterns;
+    patterns=bpatterns;
 	samples = bsamples;
 	code_tab_ptr = patternscode;
 	ncs_ptr = sncs;
-	//cout << " this " <<endl;
-	int nCodes = code_tab_ptr->n_codes;
-	//valarray <bool> codes(code_tab_ptr->n_patterns);
-	//codes.resize(nCodes);
-	//valarray <bool> new_codes( code_tab_ptr->n_patterns);
-	new_codes.resize(nCodes , false );
-	/**for (int i =0; i< nCodes; i++){
-		//codes[i]= false;
-		new_codes[i]= false;
+	codes.resize(code_tab_ptr->n_codes, false);
+	new_codes.resize(code_tab_ptr->n_codes, false) ;
 
-	}**/
-	//cout << " or this " << endl;
-	//set <string> codes;
 	good = check_codes();
-	//map <string, int> simplified;
 	simplify();
-	//set <string> new_codes;
-	//code_table.setPatternsCodes(patterns, ncs);
 
 }
 
 
 void Scheme::simplify() {
-	//string simple_pattern;
-	//simplified = {};
 	simplified.assign(code_tab_ptr->n_simplified, 0);
-	//simplified.resize(code_tab_ptr->n_patterns, 0); //?
 	for (int pattern : patterns) {
 	   simplified[code_tab_ptr->simple_ints[pattern]]++;
 	}
@@ -181,17 +156,18 @@ Scheme::Scheme(PatternsCodes *patternscode, string sname, NCS *sncs, int  bsampl
 	//patterns = bpatterns;
 
 //	valarray<int> patterns( bpatterns.data(), bpatterns.size());
-    patterns = bpatterns;
+    	patterns = bpatterns;
 	samples = bsamples;
 	code_tab_ptr = patternscode; 
 	ncs_ptr  = sncs;
-	valarray <bool> codes; //
+	valarray <bool> codes(false, code_tab_ptr->n_codes); //
 	good = check_codes();
 	simplify();
-	valarray <bool> new_codes;
+	valarray <bool> new_codes(false, code_tab_ptr->n_codes);
 	//code_table.setPatternsCodes(patterns, ncs);
 
 }
+
 bool Scheme::check_patterns(vector <string> patterns) {
 	if (patterns.size() == 0) {
 		return false;
@@ -257,7 +233,7 @@ bool Scheme::try_pattern(int  new_pattern) {
 	if (good == false) {
 		return false;
 	}
-	new_codes.resize(code_tab_ptr->n_codes, false);
+	new_codes = false;
 	int code_1, code_2;
 	/*if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
 		return false;
