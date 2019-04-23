@@ -2,7 +2,7 @@
 
 //#define DEBUG false
 
-BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, bool generation){
+BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, bool generation){
    samples = bsamples;
    ncs = bncs;
    min_depth = bmin_depth;
@@ -41,6 +41,9 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
              " patterns, " << code_table.n_simplified << " simplified" << endl;
 
     }
+    else{
+        code_table= patternscode;
+    }
    scheme.setscheme(&code_table,"1", &bncs, samples, {});
    
    out1 = "";
@@ -54,10 +57,10 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 
 unsigned long long find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run ) {
 
-    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, false )   ;
+    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
     b.patterns_listl=patterns_listl1;
     b.patterns.push_back(patterns1);
-    b.code_table=patternscode;
+   // b.code_table=patternscode;
 
     b.recover_from_counters(task_for_run);
     b.maincycle(task_for_run);
@@ -584,8 +587,11 @@ void BlockFinder::save_result() {
 
 bool BlockFinder::check_have_enought_t_free(const Scheme & scheme, const vector<int> &  patterns_left) {
    tuple <int, int> t;
-   t = code_table.count_type_in_list_of_simplified(scheme.simplified, index_of_type_T); 
-   int scheme_t = get<0>(t); 
+   vector <int> simplified_scheme;
+   simplified_scheme.assign( begin(scheme.simplified), end(scheme.simplified)  );
+  // t = code_table.count_type_in_list_of_simplified(scheme.simplified, index_of_type_T);
+   t = code_table.count_type_in_list_of_simplified( simplified_scheme, index_of_type_T);
+   int scheme_t = get<0>(t);
    int scheme_t_free = get<1>(t); 
    tuple <int, int> t2; 
    t2 = code_table.count_type_in_list_of_patterns(patterns_left, index_of_type_T);
@@ -608,8 +614,7 @@ void PatternsCodes::simplify_list_of_patterns(const vector<int>& list_of_pattern
    }
 }
 
-tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(
-    const vector <int>& arg_simplified, int index_of_type) {
+tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(const vector <int>& arg_simplified, int index_of_type) {
    int count_type = 0;
    int count_all = 0;
    int has_t;

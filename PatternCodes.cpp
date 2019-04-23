@@ -117,7 +117,7 @@ void PatternsCodes::create_simplified_table()
 
 void PatternsCodes::create_codes_table() {
     string symbol_code;
-    int code_number;
+    unsigned long code_number;
 
     codes.resize(n_patterns*n_patterns);
     for(int i=0; i<n_patterns; i++){
@@ -135,4 +135,18 @@ void PatternsCodes::create_codes_table() {
             codes[i*n_patterns+j]=code_number;
         }
     }
+    n_codes = codes_list.size();
+
+    /**
+    for (int i=0; i<n_patterns; i++){
+
+        for (int j=0; j<n_patterns; j++){
+           cout << codes[i*n_patterns+j] << " " ;
+
+
+        }
+        cout << endl;
+    } **/
+
+
 }
