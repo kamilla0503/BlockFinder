@@ -93,7 +93,7 @@ NCS get_NCS(string name) {
 		NCS ncs(name, {"HSQC", "HNCO", "HNCA", "HNCOCA", 
 		               "DQHNCA", "COfHNCA", "HNCACO"}, "XNCDATF" /*NO S*/);
 		return ncs;
-	}else if (name == "ALT12noF") {
+	}else if (name == "ALT12noF" || name =="NCDAT12" ) {
 		NCS ncs(name, {"HSQC", "HNCO", "HNCA", "HNCOCA", 
 		               "DQHNCA", "COfHNCA", "HNCACO"}, "XNCDAT" /*NO SF*/);
 		return ncs;

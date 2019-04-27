@@ -16,8 +16,8 @@ public:
         vector <string> patterns_listl;
         int depth;
         int max_depth;
-        int parallel_depth=2;
-        int task_size= 50;
+        int parallel_depth=1;
+        int task_size= 5;
 
         int  task_id;             // Number of task to be executed              
         string run_name;          // This name is printed to stdout 

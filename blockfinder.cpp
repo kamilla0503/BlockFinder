@@ -243,8 +243,11 @@ void BlockFinder::create_tasks() {
     //Task4run task1({0}, {});
     Task4run task1;
     task1.start={0};
+    task1.number = task_number;
+    task1.update_name();
     task1.end={};
     tasks.push_back(task1);
+    task_number++;
 
     int kt=0;
 
