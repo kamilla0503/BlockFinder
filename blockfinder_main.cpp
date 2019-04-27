@@ -55,11 +55,11 @@ int main(int argc, char *argv[]) {
 		cout<<"Date/Time: "<<std::ctime(&readable_time)<<endl;
 
 		cout << "NCS with name "<<ncs.name << " generated" << endl;
-		if(ncs.name=="ALT12" && samples == 3){
+		if( (ncs.name=="ALT12" || ncs.name=="NCDAT12" ) && samples == 3){
 			auto_min_t_free = 8;
 			cout<<"Automatically set min_t_free = 8"<<endl;
 		}
-		else if(ncs.name=="ALT12" && samples == 4){
+		else if( ( ncs.name=="ALT12" || ncs.name=="NCDAT12" ) && samples == 4){
 			auto_min_t_free = 16;
 			cout<<"Automatically set min_t_free = 16"<<endl;
 		}else{
