@@ -145,6 +145,8 @@ void BlockFinder::start_blockfinder() {
    if(result_ofstream.is_open()){
       result_ofstream << "[NCS = " << ncs.name << "]"<<endl<< "[Deuterated = " << (ncs.deuterated?"True":"False")<< "]"<<endl;
       result_ofstream.flush();
+   }else{
+      cout<<"No file to save results for run "<<run_name<<"results_filename= "<<results_filename<<endl;
    }
 
 }

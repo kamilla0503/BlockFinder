@@ -21,7 +21,7 @@ public:
     string name;
 
     Task4run(vector<int>t_start = {}, vector<int>t_end ={}, int t_num = -1, string t_name = "");
-    void update_name(string base = "Tasks/Task");
+    void update_name(string base = "Task");
 
 };
 

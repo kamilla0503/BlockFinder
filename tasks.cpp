@@ -17,6 +17,6 @@ Task4run::Task4run ( vector<int> t_start, vector<int> t_end, int t_num, string t
 
 void Task4run::update_name(string base_str){
    ostringstream tmp;
-   tmp<<base_str<<setw(4)<<setfill('0')<<number;
+   tmp<<base_str<<setw(5)<<setfill('0')<<number;
    name = tmp.str();
 }
