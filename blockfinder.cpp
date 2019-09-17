@@ -2,6 +2,9 @@
 
 //#define DEBUG false
 
+// instance of static private member
+std::mutex cout_locker::mtx;
+
 BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, bool generation){
    samples = bsamples;
    ncs = bncs;
@@ -55,9 +58,10 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 }
 
 
-void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run ) {
+void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run, cout_locker * cl ) {
 
     BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
+    b.cout_lock = cl;
     b.patterns_listl=patterns_listl1;
     b.patterns.push_back(patterns1);
    // b.code_table=patternscode;
@@ -122,6 +126,7 @@ int index_of_type(labeltype label_type) {
 } 
 
 void BlockFinder::start_blockfinder() {
+   cout_lock->lock();
    if(!run_task_flag){
      if (check_t_free) {
         cout << "Started maincycle. Samples =" << samples << " min depth = " << min_depth << " min_t_free=" << min_t_free << endl; 
@@ -148,6 +153,7 @@ void BlockFinder::start_blockfinder() {
    }else{
       cout<<"No file to save results for run "<<run_name<<"results_filename= "<<results_filename<<endl;
    }
+   cout_lock->unlock();
 
 }
 
@@ -210,7 +216,9 @@ void BlockFinder::maincycle( Task4run & task_for_run   ) {
       }
       check_max_depth();
    }
+   cout_lock->lock();
    cout<< run_name<<" finished task "<<to_string(task_id)<<" after "<<iterator<< " iterations"<<endl;
+   cout_lock->unlock();
 }
 
 
@@ -373,14 +381,15 @@ void BlockFinder::create_tasks() {
    //blockfinder_finished();
 
    for (Task4run c: tasks){
+      file1<<c.name<<" start= ";
 
       for (int i: c.start){
-         file1 <<setw(3)<< i << " ";
+         file1 <<setw(4)<< i << " ";
 
       }
-      file1<<" : ";
+      file1<<" end= ";
       for (int i: c.end){
-         file1 <<setw(3)<< i << " ";
+         file1 <<setw(4)<< i << " ";
 
       }
 
@@ -471,6 +480,7 @@ void BlockFinder::next_iteration_output()
     static const long long LOG_ITERATOR = 1000000; /* Log every one million of iterations */
     iterator++;
     if (iterator % LOG_ITERATOR == 0) {
+      cout_lock->lock();
       ostringstream log;
       string name;
       log<< run_name;
@@ -490,14 +500,15 @@ void BlockFinder::next_iteration_output()
       log << " max_P=" << setw(2) << setiosflags(ios::left) << max_depth + 1;
       log << " ELB_found= " << setw(6) << results_found;
       for(int d=0; d< depth && d<13; d++){
-   log << " " << setw(3) << setiosflags(ios::right) << counter[d] << "/";
-   log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
+      log << " " << setw(3) << setiosflags(ios::right) << counter[d] << "/";
+      log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
       }
       cout << log.str() << endl;
      
       if(result_ofstream.is_open())result_ofstream.flush();
       //tick_cpu_time = now_cpu_time;
       tick_wall_time = now_wall_time;
+      cout_lock->unlock();
 
     }
 }
@@ -546,7 +557,9 @@ void BlockFinder::go_deeper(vector <int> next_patterns) {
 
 
 void BlockFinder:: blockfinder_finished() {
+   cout_lock->lock();
    out1 = "[BlockFinder] finished search in" + to_string(samples) + "samples after " + to_string(iterator) + " iterations " + to_string(results_found) + " ELB schemes found";
+   cout_lock->unlock();
 }
 
 void BlockFinder::go_back() {

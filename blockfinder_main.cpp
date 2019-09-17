@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
 
         unsigned int ncpu = std::thread::hardware_concurrency();
 
+	if(ncpu>=80)ncpu=80;
 
         ctpl::thread_pool p(ncpu);
 
@@ -105,13 +106,15 @@ int main(int argc, char *argv[]) {
 	//	std::future<void> qw = p.push(find_schemes,
 	cout<<"RUNNING ALL "<<to_string(b.tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
 
+
+        cout_locker Cout_Lock;
         for (Task4run t : b.tasks){
             //cout << " numbertask : " << numbertask<< endl;
 			//BlockFinder b_test(samples, ncs, min_depth, true, -1);
 			//b_test.recoverfromcounters(t.counter_start, numbertask);
 
 
-            p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t );
+            p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t, & Cout_Lock);
             //break;
            // b_test.maincycle(t.counter_start, t.counter_end);
           //  break ;
