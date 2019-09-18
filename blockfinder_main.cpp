@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 
         unsigned int ncpu = std::thread::hardware_concurrency();
 
-	if(ncpu>=80)ncpu=80;
+	if(ncpu>=40)ncpu=40;
 
         ctpl::thread_pool p(ncpu);
 

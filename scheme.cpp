@@ -129,7 +129,7 @@ bool Scheme::check_codes() {
 void Scheme::setscheme( PatternsCodes *patternscode , string sname, NCS *sncs, int  bsamples, vector <int>  bpatterns) {
 	name = sname;
 //	valarray<int> patterns( bpatterns.data(), bpatterns.size());
-    patterns=bpatterns;
+        patterns=bpatterns;
 	samples = bsamples;
 	code_tab_ptr = patternscode;
 	ncs_ptr = sncs;

@@ -14,7 +14,7 @@ public:
 	valarray <bool> new_codes;
 //	map <string, int> simplified;
         //valarray<int> simplified;
-    vector <int> simplified;
+        vector <int> simplified;
 
 	//PatternsCodes code_table;
 

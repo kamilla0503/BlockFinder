@@ -28,8 +28,10 @@ public:
         vector <string> patterns_listl;
         int depth;
         int max_depth;
-        int parallel_depth=3;
-        int task_size= 20000;
+        int parallel_depth=1;
+        int task_size= 200;
+//        int parallel_depth=3;
+//        int task_size= 20000;
 
 	cout_locker * cout_lock;  // mutex to share cout 
         int  task_id;             // Number of task to be executed              
