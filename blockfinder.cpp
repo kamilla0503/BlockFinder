@@ -181,12 +181,16 @@ void BlockFinder::maincycle( Task4run & task_for_run   ) {
          break;
       }
       next_iteration_output();
+      //
+      // the vector<int>  is copied
       patternscurrent = patterns[depth];
       if (depth == 0 && ( (counter[0] + min_depth )> patternscurrent.size())) {
          break;
       }
       start_point = 1 + counter[depth];
       patterns_left = patternscurrent.size() - start_point;
+      //
+      // The scheme is copied
       back_up_schemes.push_back(scheme);
       scheme.add_pattern(patternscurrent[counter[depth]]);
       if (patterns_left < (min_depth - depth - 1)   ) {

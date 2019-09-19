@@ -5,9 +5,9 @@ RM=rm -f
 
 CPPFLAGS=-std=c++11 -O3 -I.
 LDFLAGS=-std=c++11 -O3 -pthread
-LDLIBS=-lboost_thread -lboost_system 
+LDLIBS=-lboost_thread -lboost_system -lboost_program_options
 
-PROGRAM=blockfinder_valarray
+PROGRAM=blockfinder
 
 SRCS=ncs.cpp \
      nmr.cpp \
@@ -36,7 +36,13 @@ PatternCodes.o: PatternCodes.cpp PatternCodes.h
 tasks.o: tasks.cpp tasks.h
 
 $(PROGRAM): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
+	$(CXX) $(LDFLAGS) $(LDLIBS) -o $(PROGRAM) $(OBJS) 
+
+
+pos_desc_example:
+	g++ -std=c++11 -c pos_desc_example.cpp
+	g++ -std=c++11 -lboost_program_options -o pos_desc_example pos_desc_example.o
+
 
 clean:
 	rm -rf $(OBJS) $(PROGRAM)

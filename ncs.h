@@ -14,12 +14,26 @@
 #include<time.h>
 #include<algorithm>
 #include<valarray>
+#include<exception>
 
 
 //#include<tr1>
 using namespace std;
 
 static constexpr int N_LABELTYPES = 8;
+
+class UnknownNCS: public exception 
+{
+  private:
+     std::string unknown_ncs_name_;
+     std::string unknown_ncs_message_;
+  public:
+     explicit UnknownNCS(const std::string& ncs_name);
+     virtual const char* what() const throw()
+     {
+        return unknown_ncs_message_.c_str();
+     }
+};
 
 class labeltype {
 public:
@@ -60,6 +74,14 @@ typedef string pattern_type;
 class NCS {
 public:
 	const vector <char> NITRO_TYPES = { 'N', 'D', 'S', 'T' };
+   const vector<string> ALL_NCS_NAME = 
+      { "NC2",    "NC2noX", 
+        "NCD2",   "NCD2noX", 
+        "NCD4",   "NCD4noX", 
+        "NCD6",   "NCD6noX", 
+        "NCDA8",  "NCDA8noX", 
+        "2H-ND2", "2H-ND3",  
+        "ALT12",  "ALT12noF", "NCDAT12", "ALT12noX" };
 	string name;
 	vector<spectrum>spec_list;
 	vector<labeltype> label_types;
@@ -83,6 +105,7 @@ public:
 	NCS(string name_ncs, vector<string>spectra_names = {}, string label_types_string = "", bool deuterated_ncs = 0);
 	void make_coding_table(void); 
 	NCS& operator=(NCS& other);
+//	NCS operator=(NCS other);
 	string calc_code(string pattern_1, string pattern_2);
 	bool check_power(string new_pattern,int min_depth);
 };
