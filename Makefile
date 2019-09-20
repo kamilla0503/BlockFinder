@@ -7,7 +7,7 @@ CPPFLAGS=-std=c++11 -O3 -I.
 LDFLAGS=-std=c++11 -O3 -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options
 
-PROGRAM=blockfinder
+PROGRAM=blockfinder_valarray_lyra
 
 SRCS=ncs.cpp \
      nmr.cpp \
