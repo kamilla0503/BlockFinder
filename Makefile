@@ -3,11 +3,13 @@ CXX=g++
 RM=rm -f
 
 
+HOST=$(shell hostname --short)
 CPPFLAGS=-std=c++11 -O3 -I.
 LDFLAGS=-std=c++11 -O3 -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options
 
-PROGRAM=blockfinder_valarray_lyra
+PROGRAM=blockfinder_valarray_${HOST}
+PROGRAM2=blockfinder
 
 SRCS=ncs.cpp \
      nmr.cpp \
@@ -36,7 +38,8 @@ PatternCodes.o: PatternCodes.cpp PatternCodes.h
 tasks.o: tasks.cpp tasks.h
 
 $(PROGRAM): $(OBJS)
-	$(CXX) $(LDFLAGS) $(LDLIBS) -o $(PROGRAM) $(OBJS) 
+	$(CXX) $(LDFLAGS) $(LDLIBS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
+	cp $(PROGRAM) $(PROGRAM2)
 
 
 pos_desc_example:
