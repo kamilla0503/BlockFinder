@@ -5,11 +5,13 @@
 #ifndef FORWORK_TASKS_H
 #define FORWORK_TASKS_H
 
+#include <boost/regex.hpp>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <iomanip>
+#include <iostream>
 
 using namespace std;
 
@@ -21,6 +23,7 @@ public:
     string name;
 
     Task4run(vector<int>t_start = {}, vector<int>t_end ={}, int t_num = -1, string t_name = "");
+    Task4run(string line);
     void update_name(string base = "Task");
 
 };

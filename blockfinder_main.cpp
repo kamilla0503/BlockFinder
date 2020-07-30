@@ -3,6 +3,7 @@
 #include<time.h>
 #include<iomanip>
 #include<iostream>
+#include<fstream>
 #include<sstream>
 
 #include<boost/asio.hpp> // host_name
@@ -26,6 +27,8 @@ int main(int argc, char *argv[]) {
    unsigned int ncpu_onboard = std::thread::hardware_concurrency(), 
                 ncpu = ncpu_onboard;
    string name_ncs;
+   string restart_file;
+   bool   restart_flag;
    NCS ncs;
    int samples, min_depth, parallel_depth, task_size;
    int auto_min_t_free = -1;
@@ -44,6 +47,7 @@ int main(int argc, char *argv[]) {
          ("ncpu,n", po::value<unsigned int>(&ncpu)->default_value(ncpu_onboard), "Number of CPU to use")
          ("parallel-depth,d", po::value<int>(&parallel_depth)->default_value(1), "Execute in parallel from that depth")
          ("task-size,t", po::value<int>(&task_size)->default_value(200), "The size of task to be executed in parallel")
+         ("restart", po::value<string>(&restart_file), "Restart file with unfinished tasks, e.g. \"restart.txt\". The file is created by python script viewrun.txt")
          ("list-ncs", "List all supporten NCS")
       ;
       pos_desc.add("NCS", 1)
@@ -100,6 +104,11 @@ int main(int argc, char *argv[]) {
          cout << desc << endl;
          return -1;
       }
+      
+      if( vm.count("restart") )
+        restart_flag = true;
+      else
+        restart_flag = false;
 
    }catch(const po::error & ex){
       cerr << ex.what() <<endl;
@@ -139,6 +148,27 @@ int main(int argc, char *argv[]) {
    cout<<"CREATE TASKS STARTED "<<endl;
    b.create_tasks();
    cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
+
+   if(restart_flag){
+      cout<<endl;
+      cout<<"RESTART FILE "<<restart_file<<" WILL BE USED TO RUN UNFINISHED TASKS ONLY"<<endl;
+      string line;
+      ifstream restart (restart_file);
+      if (restart.is_open()) {
+        int i=0;
+        while ( getline (restart,  line) ){
+          if(i<10){
+            cout << line << endl;
+            Task4run t(line);
+          }
+          i++;
+        }
+        restart.close();
+     }else 
+        cout <<" UNABLE TO OPEN FILE "<<restart_file<<endl;
+
+     exit(1);
+   }
 
 
    ctpl::thread_pool p(ncpu);
