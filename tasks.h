@@ -25,10 +25,12 @@ public:
     Task4run(vector<int>t_start = {}, vector<int>t_end ={}, int t_num = -1, string t_name = "");
     Task4run(string line);
     void update_name(string base = "Task");
-
+    operator string() const;
 };
 
-
+bool operator ==(Task4run t1, Task4run t2);
+vector<int> string_to_vector_int(const string str);
+ostream& operator<<( const Task4run& t, ostream& os );
 
 
 #endif //FORWORK_TASKS_H

@@ -149,7 +149,10 @@ int main(int argc, char *argv[]) {
    b.create_tasks();
    cout<<"CREATE TASKS FINISHED. "<<to_string(b.tasks.size())<<" TASKS CREATED"<<endl;
 
-   if(restart_flag){
+   vector<Task4run> run_tasks(0);
+   if(!restart_flag){
+      run_tasks = b.tasks;
+   }else{
       cout<<endl;
       cout<<"RESTART FILE "<<restart_file<<" WILL BE USED TO RUN UNFINISHED TASKS ONLY"<<endl;
       string line;
@@ -157,9 +160,29 @@ int main(int argc, char *argv[]) {
       if (restart.is_open()) {
         int i=0;
         while ( getline (restart,  line) ){
-          if(i<10){
-            cout << line << endl;
-            Task4run t(line);
+          if(i<b.tasks.size()){
+            Task4run restart_task(line);
+	    int task_number = restart_task.number;
+	    if(task_number >= b.tasks.size()){
+              cerr<<line<<endl;
+	      cerr<<"   Error: task number "<<task_number<<
+		" is out of range: "<<b.tasks.size()<<endl;
+	      i++;
+	      continue;
+	    }
+	    Task4run generated_task = b.tasks[restart_task.number];
+	    if(! ( restart_task == generated_task) ){
+	      cerr<<line<<endl;
+	      cerr<<"  -- Tasks do not match! "<<endl;
+	      cerr<<"    restart_task ="<<  (string)restart_task<<endl;
+	      cerr<<"  generated_task ="<< (string)generated_task<<endl;
+	    }else{
+	      run_tasks.push_back(restart_task);
+	      if (i<10){
+	         cout<<line<<"  -- OK"<<endl;
+	      }
+	      if(i==10)cout<<"..."<<endl;
+	    }
           }
           i++;
         }
@@ -167,7 +190,9 @@ int main(int argc, char *argv[]) {
      }else 
         cout <<" UNABLE TO OPEN FILE "<<restart_file<<endl;
 
-     exit(1);
+     cout<<"RESTART FILE '"<<restart_file<<"' PARSED, "<<
+        run_tasks.size()<<" TAKS OF " <<b.tasks.size()<<" ARE READY FOR RESTART"<<endl;
+     //exit(1);
    }
 
 
@@ -186,10 +211,10 @@ int main(int argc, char *argv[]) {
    cout << endl;
    int numbertask=0;
    // std::future<void> qw = p.push(find_schemes,
-   cout<<"RUNNING ALL "<<to_string(b.tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
+   cout<<"RUNNING ALL "<<to_string(run_tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
 
    cout_locker Cout_Lock;
-   for (Task4run t : b.tasks){
+   for (Task4run t : run_tasks){
       p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t, & Cout_Lock);
       numbertask=numbertask+1;
    }

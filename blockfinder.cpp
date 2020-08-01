@@ -385,7 +385,8 @@ void BlockFinder::create_tasks() {
    //blockfinder_finished();
 
    for (Task4run c: tasks){
-      file1<<c.name<<" start= ";
+      file1<<(string)c<<endl;
+      /*file1<<c.name<<" start= ";
 
       for (int i: c.start){
          file1 <<setw(4)<< i << " ";
@@ -397,7 +398,7 @@ void BlockFinder::create_tasks() {
 
       }
 
-      file1 << endl;
+      file1 << endl; */
 
    }
 
