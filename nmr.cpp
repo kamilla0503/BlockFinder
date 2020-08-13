@@ -1,5 +1,6 @@
 #include"ncs.h"
 
+
 labeltype::labeltype(char lname){
    name = lname;
    if      (name == 'X') { label_HN = 0; label_CA = 0; label_CO = 0; }
@@ -48,6 +49,11 @@ int spectrum::has_signal(labeltype lt1, labeltype lt2) {
 	}
 }
 
+UnknownNCS::UnknownNCS(const std::string& ncs_name) :
+  unknown_ncs_name_(ncs_name)
+{
+   unknown_ncs_message_ = "Error: Unknown NCS name:"+ncs_name;
+};
 
 NCS get_NCS(string name) {
 
@@ -93,7 +99,7 @@ NCS get_NCS(string name) {
 		NCS ncs(name, {"HSQC", "HNCO", "HNCA", "HNCOCA", 
 		               "DQHNCA", "COfHNCA", "HNCACO"}, "XNCDATF" /*NO S*/);
 		return ncs;
-	}else if (name == "ALT12noF") {
+	}else if (name == "ALT12noF" || name =="NCDAT12" ) {
 		NCS ncs(name, {"HSQC", "HNCO", "HNCA", "HNCOCA", 
 		               "DQHNCA", "COfHNCA", "HNCACO"}, "XNCDAT" /*NO SF*/);
 		return ncs;
@@ -106,9 +112,6 @@ NCS get_NCS(string name) {
 	}
 
 	else{
-	  	cerr<<"Error: Unknown NCS name: "<<name<<endl;
-		NCS ncs(name, {}, "");
-		/* TODO: Generate exception */
-	   	return ncs;
+     throw UnknownNCS(name);
 	}
 }
