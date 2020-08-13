@@ -7,26 +7,18 @@ public:
 	NCS *ncs_ptr;
 	PatternsCodes *code_tab_ptr; 
 	int samples;
-	//vector <int> patterns;
 	valarray<int> patterns;
 	int number_of_patterns;
-	//set <int> codes;
 	valarray <bool> codes;
-	//set <string> new_codes;
 	valarray <bool> new_codes;
-//	map <string, int> simplified;
     valarray<int> simplified;
-        //vector <int> simplified;
-
-	//PatternsCodes code_table;
 
 	bool good;
 	Scheme();
 	Scheme(int listsize, PatternsCodes *patternscode, string sname , NCS *sncs , int  bsamples = 0, vector <int>  bpatterns = {});
 
 	bool check_codes();
-	void simplify();
-	//bool check_patterns(vector <string> patterns);
+	void simplify(); 
 	void sort();
 	void add_new_codes(int new_pattern);
 	void add_pattern(int new_pattern);
