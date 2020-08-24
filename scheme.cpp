@@ -20,7 +20,7 @@ bool operator<(const Scheme_compact& t1, const Scheme_compact& t2) {
 
 bool Scheme::operator<(const Scheme& t2) {
     int nPatterns = min(t2.number_of_patterns, this->number_of_patterns );
-    for (int i=0; i< t2.number_of_patterns; i++){
+    for (int i=0; i< nPatterns; i++){
         if (this->simplified[i] > t2.simplified[i])
         return false;
     }
@@ -88,7 +88,7 @@ void Scheme::setscheme(int listsize, PatternsCodes *patternscode , string sname,
 
     for (int i =0; i < number_of_patterns; i++)
     {
-        patterns[ i] = patterns[ i]+1;
+        patterns[ i] = bpatterns[ i];
     }
     samples = bsamples;
 	code_tab_ptr = patternscode;
@@ -97,7 +97,6 @@ void Scheme::setscheme(int listsize, PatternsCodes *patternscode , string sname,
 	new_codes.resize(code_tab_ptr->n_codes, false) ;
 	good = check_codes();
 	simplify();
-
 }
 
 void Scheme::simplify() {
@@ -122,14 +121,14 @@ Scheme::Scheme(int listsize, PatternsCodes *patternscode, string sname, NCS *snc
 
 void Scheme::sort(){
 	if(number_of_patterns>1) {
-        std::sort(&patterns[0], &patterns[number_of_patterns -1]); //
+        std::sort(&patterns[0], &patterns[number_of_patterns ]); //
     }
 }
 
 
 void Scheme_compact::sort(){
     if(number_of_patterns>1) {
-        std::sort(&patterns[0], &patterns[number_of_patterns -1]);
+        std::sort(&patterns[0], &patterns[number_of_patterns ]);
     }
 }
 

@@ -1,8 +1,5 @@
 #include"blockfinder.h"
 
-//#define DEBUG false
-
-// instance of static private member
 std::mutex cout_locker::mtx;
 
 BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, bool generation){
@@ -39,7 +36,6 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
         code_table.setPatternsCodes(patterns_listl, ncs);
         cout << "Code Table generated, " << code_table.n_patterns <<
              " patterns, " << code_table.n_simplified << " simplified" << endl;
-
     }
     else{
         code_table= patternscode;
@@ -47,7 +43,6 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 
     if (generation) {
         scheme.setscheme(patterns_listl.size(), &code_table, "1", &bncs, samples, {});
-
     }
    out1 = "";
    start_cpu_time = clock();
@@ -59,12 +54,10 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
 
 
 void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run, cout_locker * cl ) {
-
     BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
     b.cout_lock = cl;
     b.patterns_listl=patterns_listl1;
     b.patterns.push_back(patterns1);
-    //b.scheme.number_of_patterns = patterns_listl1.size();
     b.scheme.setscheme(b.patterns_listl.size(), &b.code_table, "1", &bncs, b.samples, {}  );
     b.recover_from_counters(task_for_run);
     b.maincycle(task_for_run);
@@ -75,20 +68,16 @@ vector<string> BlockFinder::generate_patterns(int  bsamples, bool top ) {
    vector <string> new_set;
    vector <string>  current_set;
    if (bsamples == 0) {
-      new_set = {"" }; //previously "0"
+      new_set = {"" };
       return new_set;
 }
-   
    current_set = generate_patterns(bsamples - 1, false);
-   //new_set = { };
    string new_pattern;
    for (string item : current_set) {
       for (labeltype option : ncs.label_types) {
          new_pattern = item + option.name;
          if (top==true ) {
             if (ncs.check_power(new_pattern, min_depth) ){
-
-
                new_set.push_back(new_pattern); 
             }
       }
@@ -211,18 +200,11 @@ void BlockFinder::maincycle( Task4run & task_for_run   ) {
 }
 
 
-
-
-
-
-
 void BlockFinder::create_tasks() {
     vector<int> patternscurrent, next_patterns;
     int start_point;
     int patterns_left;
     bool flag_t_free;
-    //bool st = false;
-    //vector <int >  ct;
 
     create_task_flag = true;
     int task_counter = 0;
@@ -241,10 +223,6 @@ void BlockFinder::create_tasks() {
 
     int kt=0;
 
-
-
-//    std::ofstream iterlog;          // поток для записи  
-//    iterlog.open("CreateTastks_iterlog.txt");
     start_blockfinder();
 
     while (true) {
@@ -268,23 +246,9 @@ void BlockFinder::create_tasks() {
            // if (scheme.patterns.size() >= min_depth) {
             if (scheme.number_of_patterns >= min_depth) {
                 save_result();
-/**
-            cout << "block 1" << endl;
-                cout << " save " << endl;
-                for (int c: counter){
-                    cout << c<< " ";
-
-
-                }
-
-                cout << endl;**/
 
             }
             go_back();
-
-            // temporary break;
-            //break;
-
 
             continue;
         }
@@ -299,24 +263,19 @@ void BlockFinder::create_tasks() {
 
             if(depth == parallel_depth){
 
-                //out << "back up " << endl;
-
                 task_counter=task_counter+1;
-                //cout << "this depth " << endl;
-                //kt=kt+counter[pool_depth_test];
 
                 if (task_counter%task_size==0){
 
                     tasks.back().end = counter;
 
-                    //Task4run task1(counter, {});
                     task1.start=counter;
                     task1.end={};
-		    task1.number = task_number;
-		    task1.update_name();
+		            task1.number = task_number;
+		            task1.update_name();
 
                     tasks.push_back(task1);
-		    task_number++;
+		            task_number++;
 
 
 
@@ -331,9 +290,6 @@ void BlockFinder::create_tasks() {
                 go_deeper(next_patterns);
 
             }
-
-
-
 
 
 
@@ -355,7 +311,6 @@ void BlockFinder::create_tasks() {
 
 
    ofstream file1("tasksend.txt");
-   //blockfinder_finished();
 
    for (Task4run c: tasks){
       file1<<c.name<<" start= ";
@@ -430,9 +385,6 @@ void BlockFinder::recover_from_counters( const vector <int> & recover_counters, 
 
 
 
-
-
-
 void BlockFinder::next_iteration_output()
 {
     static const long long LOG_ITERATOR = 1000000; /* Log every one million of iterations */
@@ -480,8 +432,7 @@ void BlockFinder::go_parallel() {
 void BlockFinder::check_max_depth() {
    if (depth > max_depth) {
       max_depth = depth;
-//      out1 = "[BlockFinder" + to_string(samples) + " ] New max depth:" + to_string(max_depth); 
-//      cout<<out1<<endl;
+
    }
 
 } 
@@ -514,7 +465,6 @@ void BlockFinder::go_back() {
    counter.pop_back();
    counter[counter.size() - 1] = counter[counter.size() - 1] + 1;
 
-
    back_up_schemes.pop_back();
    scheme = back_up_schemes[back_up_schemes.size() - 1];
    back_up_schemes.pop_back();
@@ -527,8 +477,8 @@ void BlockFinder::save_result() {
       return; 
    }
    int depth_of_scheme;
-   //depth_of_scheme= scheme.patterns.size();
-    depth_of_scheme= scheme.number_of_patterns;
+
+   depth_of_scheme= scheme.number_of_patterns;
    Scheme_compact new_scheme;
    new_scheme.code_tab_ptr = scheme.code_tab_ptr;
    new_scheme.samples      = scheme.samples;
