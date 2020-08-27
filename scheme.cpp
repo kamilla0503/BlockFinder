@@ -1,30 +1,34 @@
 #include"scheme.h"
 
-bool operator<(const Scheme& t1, const Scheme& t2) {
-    int nPatterns = min(t2.number_of_patterns, t1.number_of_patterns );
-    for (int i=0; i< nPatterns; i++){
-        if (t1.simplified[i] > t2.simplified[i])
-            return false;
+template<class InputIt1, class InputIt2, class Compare>
+bool lexicographical_compare(InputIt1 first1, InputIt1 last1,
+                             InputIt2 first2, InputIt2 last2,
+                             Compare comp)
+{
+    for ( ; (first1 != last1) && (first2 != last2); ++first1, (void) ++first2 ) {
+        if (comp(*first1, *first2)) return true;
+        if (comp(*first2, *first1)) return false;
     }
-    return true;
+    return (first1 == last1) && (first2 != last2);
+}
+
+bool operator<(const Scheme& t1, const Scheme& t2) {
+
+    return std::lexicographical_compare(std::begin(t1.simplified), std::end(t1.simplified),
+                                        std::begin(t2.simplified), std::end(t2.simplified));
 }
 
 bool operator<(const Scheme_compact& t1, const Scheme_compact& t2) {
-    int nPatterns = min(t2.number_of_patterns, t1.number_of_patterns );
-    for (int i=0; i< nPatterns; i++){
-        if (t1.simplified[i] >  t2.simplified[i])
-        return false;
-    }
-    return true;
+
+    return std::lexicographical_compare(std::begin(t1.simplified), std::end(t1.simplified),
+                                        std::begin(t2.simplified), std::end(t2.simplified));
+
 }
 
 bool Scheme::operator<(const Scheme& t2) {
-    int nPatterns = min(t2.number_of_patterns, this->number_of_patterns );
-    for (int i=0; i< nPatterns; i++){
-        if (this->simplified[i] > t2.simplified[i])
-        return false;
-    }
-    return true;
+
+    return std::lexicographical_compare(std::begin(this->simplified), std::end(this->simplified),
+                                        std::begin(t2.simplified), std::end(t2.simplified));
 }
 
 bool operator==(const Scheme& t1, const Scheme& t2) {
@@ -125,7 +129,6 @@ void Scheme::sort(){
     }
 }
 
-
 void Scheme_compact::sort(){
     if(number_of_patterns>1) {
         std::sort(&patterns[0], &patterns[number_of_patterns ]);
@@ -188,7 +191,7 @@ string Scheme::full_str() {
     for (int i=0; i<number_of_patterns; i++) {
 		all_p = all_p + code_tab_ptr->patterns[i] + "\n";
 	}
-	s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(patterns.size()) + "]\n" + all_p;
+	s = "[ELB samples = " + to_string(samples) + " patterns = " + to_string(number_of_patterns) + "]\n" + all_p;
 	return s;
 }
 
@@ -210,8 +213,8 @@ string Scheme_compact::full_str() {
 
     header = header + "samples = " + to_string(samples) + " patterns = " + to_string(number_of_patterns) + "]\n";
 
-    for (int int_simple =0; int_simple<number_of_patterns; int_simple++ ) {
-      sv = sv + " "+ to_string(simplified[int_simple]);
+    for (int int_simple : simplified) {
+        sv = sv + " "+ to_string(int_simple);
     }
     sv = sv + " ]\n";
     for (int i=0; i<number_of_patterns; i++) {

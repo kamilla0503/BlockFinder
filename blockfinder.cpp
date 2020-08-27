@@ -253,8 +253,7 @@ void BlockFinder::create_tasks() {
             continue;
         }
         get_next_patterns(patternscurrent, patterns_left, start_point, next_patterns);
-
-
+        
         flag_t_free = true;
         if (check_t_free) {
             flag_t_free = check_have_enought_t_free(scheme, next_patterns);
@@ -277,12 +276,8 @@ void BlockFinder::create_tasks() {
                     tasks.push_back(task1);
 		            task_number++;
 
-
-
                     task_counter=0;
                 }
-
-
                 go_parallel();
             }
             if(depth<parallel_depth){
@@ -291,15 +286,11 @@ void BlockFinder::create_tasks() {
 
             }
 
-
-
         }
         else {
             //if (scheme.patterns.size() >= min_depth) {
             if (scheme.number_of_patterns >= min_depth) {
                 save_result();
-
-
 
             }
             go_parallel();
@@ -308,8 +299,6 @@ void BlockFinder::create_tasks() {
     }
 
    tasks.back().end=counter;
-
-
    ofstream file1("tasksend.txt");
 
    for (Task4run c: tasks){
@@ -322,17 +311,12 @@ void BlockFinder::create_tasks() {
       file1<<" end= ";
       for (int i: c.end){
          file1 <<setw(4)<< i << " ";
-
       }
-
       file1 << endl;
-
    }
-
 
    //iterlog.close();
    file1.close();
-
    cout<< "create_tasks: Finished after "<<iterator<< " iterations"<<", "<<tasks.size()<<" tasks generated"<<endl;
 }
 
@@ -464,11 +448,9 @@ void BlockFinder::go_back() {
    patterns.pop_back();
    counter.pop_back();
    counter[counter.size() - 1] = counter[counter.size() - 1] + 1;
-
    back_up_schemes.pop_back();
    scheme = back_up_schemes[back_up_schemes.size() - 1];
    back_up_schemes.pop_back();
-
 }
 
 void BlockFinder::save_result() {
