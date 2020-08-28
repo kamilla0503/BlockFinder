@@ -26,7 +26,10 @@ def scan_tasks(taskfile):
 task_run_re= re.compile('^\\[Task(?P<task>\d+)\\] +(?P<iter>\d+)M +(?P<time>\d+) sec +(?P<speed>\d+\.\d+) +Kiter\\/sec +max_P=(?P<maxP>\d+) +ELB_found= (?P<ELB>\d+)')
 task_finished_re = re.compile('^\\[Task(?P<task>\d+)\\] finished task (?P<task2>\d+) after (?P<iter>\d+) iterations')
 
-def scan_log(logfiles_list, tasks, restart):
+def scan_log(args, tasks):
+   logfiles_list = args.log
+   restart       = args.restart
+   savelog       = args.save_log if 'save_log' in args else None
    n_tasks = len(tasks)
    log_lines_in_all_files = 0
    list_task_iter  = [None for t in range(n_tasks)]
@@ -34,6 +37,7 @@ def scan_log(logfiles_list, tasks, restart):
    list_task_speed = [None for t in range(n_tasks)]
    list_task_maxP  = [None for t in range(n_tasks)]
    list_task_ELB   = [None for t in range(n_tasks)]
+   list_last_log   = [ ["", ""]  for t in range(n_tasks)]
    list_task_finished = [False for t in range(n_tasks)]
 
    wall_time = 0
@@ -62,6 +66,8 @@ def scan_log(logfiles_list, tasks, restart):
               list_task_speed[task_num] = task_speed
               list_task_maxP[task_num]  = task_maxP
               list_task_ELB[task_num]   = task_ELB
+              list_last_log[task_num][0] = list_last_log[task_num][1] 
+              list_last_log[task_num][1] = line.strip() 
               continue
            task_finished_match = task_finished_re.match(line)
            if task_finished_match:
@@ -69,6 +75,8 @@ def scan_log(logfiles_list, tasks, restart):
               task_iter = int(task_finished_match.group('iter'))
               list_task_iter[task_num] = task_iter
               list_task_finished[task_num] = True
+              list_last_log[task_num][0] = list_last_log[task_num][1] 
+              list_last_log[task_num][1] = line.strip() 
               
         print("Scan of log file {} finished, {:,} lines scanned".format(logfile, log_lines))
         
@@ -89,6 +97,10 @@ def scan_log(logfiles_list, tasks, restart):
    out_line_num = 0
    
    res= open(restart, 'w')
+   if savelog:
+      slog = open(savelog, 'w')
+   else:
+      slog = None
 
    for task_num in range(n_tasks):
       
@@ -123,6 +135,10 @@ def scan_log(logfiles_list, tasks, restart):
       else:
          if res:
             print(tasks[task_num]['line'], file=res)
+      if slog:
+         for line in list_last_log[task_num]:
+           if line:
+             print(line, file=slog)
    
    rest_size = ( n_tasks ) % out_line_len
    out_line_fill= out_line + (" " * (out_line_len - rest_size ) )+ " {:>5}".format(n_tasks)
@@ -154,7 +170,8 @@ if __name__ == '__main__':
    parser.add_argument("log", help='Log file to scan', type=str, nargs='+')
    parser.add_argument("--tasks", "-t", help='Tasks file', type=str, default="tasksend.txt")
    parser.add_argument("--restart", "-r", help='Create restart file', type=str, default="restart.txt")
+   parser.add_argument("--save-log", "-o", help='Save short log file (2 lines per task)', type=str)
    args = parser.parse_args()
    tasks = scan_tasks(args.tasks)
    print("Number of tasks = {}".format(len(tasks)))
-   stat = scan_log(args.log, tasks, args.restart)
+   stat = scan_log(args, tasks)
