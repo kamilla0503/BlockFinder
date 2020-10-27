@@ -70,6 +70,23 @@ void PatternsCodes::print_flags(){
    }
 }
 
+
+void PatternsCodes::print_codes(string file){
+    ofstream file_with_codes (file);
+    if(file_with_codes.is_open()) {
+       file_with_codes<<"n_patterns=   "<<n_patterns<<endl;
+       file_with_codes<<"n_simplified= "<<n_simplified<<endl;
+       file_with_codes<<"n_codes=      "<<n_codes<<endl;
+       for(int i=0; i<n_patterns; i++){
+	 for(int j=0; j<n_patterns; j++)
+           file_with_codes<<setw(3)<<calc_code_fast(i,j)<<" ";
+         file_with_codes<<endl;
+       }
+    }else{
+       cerr<<"Can't open file "<<file<<" for wrinting codes table"<<endl;
+    }
+}
+
 void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs ) {
 
     patterns=a_patterns;

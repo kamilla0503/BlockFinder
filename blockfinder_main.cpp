@@ -29,6 +29,8 @@ int main(int argc, char *argv[]) {
    string name_ncs;
    string restart_file;
    bool   restart_flag;
+   string print_codes_file;
+   bool   print_codes_flag;
    NCS ncs;
    int samples, min_depth, parallel_depth, task_size;
    int auto_min_t_free = -1;
@@ -48,6 +50,7 @@ int main(int argc, char *argv[]) {
          ("parallel-depth,d", po::value<int>(&parallel_depth)->default_value(1), "Execute in parallel from that depth")
          ("task-size,t", po::value<int>(&task_size)->default_value(200), "The size of task to be executed in parallel")
          ("restart", po::value<string>(&restart_file), "Restart file with unfinished tasks, e.g. \"restart.txt\". The file is created by python script viewrun.txt")
+         ("print-codes", po::value<string>(&print_codes_file), "Print codes to separate file")
          ("list-ncs", "List all supporten NCS")
       ;
       pos_desc.add("NCS", 1)
@@ -110,6 +113,13 @@ int main(int argc, char *argv[]) {
       else
         restart_flag = false;
 
+            
+      if( vm.count("print-codes") )
+        print_codes_flag = true;
+      else
+        print_codes_flag = false;
+
+
    }catch(const po::error & ex){
       cerr << ex.what() <<endl;
       cerr << desc << endl;
@@ -144,6 +154,12 @@ int main(int argc, char *argv[]) {
    BlockFinder b(samples, ncs, min_depth, auto_min_t_free, empty_table);
    b.parallel_depth = parallel_depth;
    b.task_size = task_size;
+
+   if(print_codes_flag){
+      b.code_table.print_codes(print_codes_file);
+      cout<<"Codes are written to file "<<print_codes_file<<endl;
+      exit(0);
+   }
 
    cout<<"CREATE TASKS STARTED "<<endl;
    b.create_tasks();
