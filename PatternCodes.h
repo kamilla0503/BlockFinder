@@ -22,6 +22,9 @@ public:
 	 index of simple_form in unique_simplified_patterns */
     vector <string> unique_simplified_patterns; /* of size n_simplified */
     map <string, int> code_to_number;
+    vector <int>    simple_multiplicity; /* of size n_simplified */
+      /* Number of patterns that are simplified to this simple form
+       * The sum of vector elements is equal to n_patterns */
 
     valarray<bitset<N_LABELTYPES> > have_labeltype_simplified_flag; /* of size n_simplified */
     valarray<bitset<N_LABELTYPES> > have_labeltype_pattern_flag;    /* of size n_patterns */

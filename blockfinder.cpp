@@ -42,6 +42,11 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
         code_table.setPatternsCodes(patterns_listl, ncs);
         cout << "Code Table generated, " << code_table.n_patterns <<
              " patterns, " << code_table.n_simplified << " simplified" << endl;
+	cout<<"List of unique simplified patterns with multiplicities:"<<endl;
+	for(int s=0; s<code_table.n_simplified ; s++){
+	  cout<<"   "<<setw(2)<<s<<" "<<code_table.unique_simplified_patterns[s]<<
+	    " "<<setw(3)<<code_table.simple_multiplicity[s]<<endl;
+	}
 
     }
     else{

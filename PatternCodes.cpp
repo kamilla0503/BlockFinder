@@ -89,6 +89,7 @@ void PatternsCodes::create_simplified_table()
     simple_form={};
     unique_simplified_patterns= {};
     simple_ints = {};
+    simple_multiplicity = {};
     map <string, int> simplified_map = {};
     int unique_simple_count = -1; /* will be incremented */
     int pattern_simple_int;
@@ -100,9 +101,11 @@ void PatternsCodes::create_simplified_table()
 	unique_simple_count++;
 	pattern_simple_int = unique_simple_count;
         simplified_map[simple_pattern]=pattern_simple_int;
+	simple_multiplicity.push_back(1);
       }
       else{
 	pattern_simple_int = simplified_map[simple_pattern];
+        simple_multiplicity[pattern_simple_int]++;
       }
       simple_form.push_back(simple_pattern);
       simple_ints.push_back(pattern_simple_int);

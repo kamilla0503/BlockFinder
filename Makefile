@@ -4,8 +4,8 @@ RM=rm -f
 
 
 HOST=$(shell hostname --short)
-CPPFLAGS=-std=c++11 -pg -O3 -I.
-LDFLAGS=-std=c++11 -pg -O3 -pthread
+CPPFLAGS=-std=c++11 -O3 -I.
+LDFLAGS=-std=c++11 -O3 -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options -lboost_regex
 
 BRANCH=restart-pg-O3
