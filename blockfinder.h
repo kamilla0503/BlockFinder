@@ -1,6 +1,7 @@
 //#pragma once
 #include"scheme.h"
 #include "tasks.h"
+#include "counter.h"
 
 
 #include <mutex>
@@ -48,14 +49,16 @@ public:
         ofstream result_ofstream;
         vector <int> counter = {}; //temporary
         vector <Scheme> back_up_schemes = {};
-        unsigned long long results_found;
+        unsigned long long results_found;        /* Number of results found        */
+        unsigned long long try_pattern_counter;  /* Number of calls to try_pattern */
+        unsigned long long iterator;             /* Number of iterations           */
         map <unsigned long long, set< Scheme_compact>> result;//soe
         PatternsCodes code_table;
-        unsigned long long iterator;
         int index_of_type_T;
         string out1;
         time_t start_cpu_time, tick_cpu_time;
         struct timespec start_wall_time, tick_wall_time;
+
         vector <string> generate_patterns(int  samples, bool top = true);
         void open_files();
         void start_blockfinder();

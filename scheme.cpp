@@ -235,31 +235,19 @@ bool Scheme::try_pattern(int  new_pattern) {
 	}
 	new_codes = false;
 	int code_1, code_2;
-	/*if (find(patterns.begin(), patterns.end(), new_pattern) != patterns.end()) {
-		return false;
-	}*/
-	//int n = distance(patterns.begin(), find(patterns.begin(), patterns.end(), new_pattern));
    	int n = new_pattern;
-//	int m = code_tab_ptr->patterns.size();
 	for (int i=0; i<patterns.size(); i++) {
-		//code_1 = patternscode.codes[patterns[i]*m+n];
-
-		//code_1 = patternscode.codes[patterns[i]*m+n];
-		//code_2 = patternscode.codes[n*m+patterns[i]];
 		code_1 = code_tab_ptr->calc_code_fast(patterns[i],n);
 		code_2 = code_tab_ptr->calc_code_fast(n,patterns[i]);
 		
 		if (codes[code_1]==true || codes[code_2]==true || (code_2 == code_1) || new_codes[code_1]==true || new_codes[code_2]==true) {
-
 			return false;
 		}
 		else {
 			new_codes[code_1]=true;
 			new_codes[code_2]=true;
 		}
-
 	}
-	//int self_code = patternscode.codes[n*m+n];
 	int self_code = code_tab_ptr->calc_code_fast(n,n);
 	if (codes[self_code] ==true|| new_codes[self_code]==true) {
 		return false;

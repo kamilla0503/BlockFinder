@@ -18,7 +18,8 @@ SRCS=ncs.cpp \
      scheme.cpp \
      blockfinder_main.cpp \
      PatternCodes.cpp \
-     tasks.cpp
+     tasks.cpp \
+     counter.cpp
 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
@@ -28,15 +29,17 @@ ncs.o: ncs.cpp ncs.h
 
 nmr.o: nmr.cpp ncs.h 
 
-blockfinder.o: blockfinder.cpp blockfinder.h ncs.h
+blockfinder.o: blockfinder.cpp blockfinder.h ncs.h scheme.h
 
-blockfinder_main.o: blockfinder_main.cpp blockfinder.h ncs.h
+blockfinder_main.o: blockfinder_main.cpp blockfinder.h ncs.h scheme.h
 
 scheme.o: scheme.cpp scheme.h
 
 PatternCodes.o: PatternCodes.cpp PatternCodes.h
 
 tasks.o: tasks.cpp tasks.h
+
+counter.o: counter.cpp counter.h
 
 $(PROGRAM): $(OBJS)
 	$(CXX) $(LDFLAGS) $(LDLIBS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
