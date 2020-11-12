@@ -49,6 +49,11 @@ public:
         unsigned long long results_found;        /* Number of results found        */
         unsigned long long try_pattern_counter;  /* Number of calls to try_pattern */
         unsigned long long iterator;             /* Number of iterations           */
+	
+	/*Counter count_results_found;
+	Counter count_try_pattern;
+	Counter count_iterations;*/
+	
         map <unsigned long long, set< Scheme_compact>> result;//soe
         PatternsCodes code_table;
         int index_of_type_T;

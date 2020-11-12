@@ -5,12 +5,13 @@ RM=rm -f
 
 
 HOST=$(shell hostname --short)
+BRANCH=$(shell git name-rev --name-only HEAD)
 CPPFLAGS= -I. 
 CXXFLAGS= -std=c++11 -O3 
 LDFLAGS= -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options -lboost_regex
 
-BRANCH=restart-pg-O3
+#BRANCH=nolde_speed
 PROGRAM=blockfinder_${BRANCH}_${HOST}
 PROGRAM2=blockfinder
 
