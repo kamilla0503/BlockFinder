@@ -11,7 +11,6 @@ CXXFLAGS= -std=c++11 -O3
 LDFLAGS= -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options -lboost_regex
 
-#BRANCH=nolde_speed
 PROGRAM=blockfinder_${BRANCH}_${HOST}
 PROGRAM2=blockfinder
 
