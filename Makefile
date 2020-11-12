@@ -8,7 +8,7 @@ CPPFLAGS=-std=c++11 -O3 -I.
 LDFLAGS=-std=c++11 -O3 -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options -lboost_regex
 
-BRANCH=restart-pg-O3
+BRANCH=dev_maxim
 PROGRAM=blockfinder_${BRANCH}_${HOST}
 PROGRAM2=blockfinder
 
