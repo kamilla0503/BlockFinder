@@ -21,7 +21,7 @@ SRCS=ncs.cpp \
      blockfinder_main.cpp \
      PatternCodes.cpp \
      tasks.cpp \
-     counter.cpp
+     speedo.cpp
 
 DEPDIR := .deps
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d

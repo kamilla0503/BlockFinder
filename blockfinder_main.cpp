@@ -13,14 +13,13 @@ namespace po = boost::program_options;
 
 
 //#include<boost/chrono.hpp> // process_system_cpu_clock
-#include<chrono>
 
 #include "ctpl.h"
 #include "blockfinder.h"
+#include "speedo.h"
 
 using namespace std;
 using namespace boost::asio::ip;
-using namespace std::chrono;
 
 int main(int argc, char *argv[]) {
    
@@ -127,15 +126,15 @@ int main(int argc, char *argv[]) {
       return(-1);
    };
 
-   system_clock::time_point now_time = system_clock::now();
-   auto readable_time = system_clock::to_time_t(now_time);
+   Speedo overall_timer;
+   overall_timer.start();
    cout <<"===== BlockFinder started ====="<<endl;
    cout <<"Host:     "<<host_name()<<endl;
    cout <<"Command:  ";
 
    for(int arg=0; arg<argc;arg++)cout<<argv[arg]<<" ";
    cout<<endl;
-   cout<<"Date/Time: "<<std::ctime(&readable_time)<<endl;
+   cout<<"Date/Time: "<<overall_timer.readable_date_time()<<endl;
 
    cout << "NCS with name "<<ncs.name << " generated" << endl;
    if( (ncs.name=="ALT12" || ncs.name=="NCDAT12" ) && samples == 3){
@@ -239,17 +238,12 @@ int main(int argc, char *argv[]) {
    // Wait for all jobs to finish
    p.stop(true);
    cout<<"EXECUTION OF ALL "<<to_string(numbertask)<<" TASKS FINISHED"<<endl;
-   cpu_usage_finish = clock();
-   clock_gettime(CLOCK_MONOTONIC, &wall_clock_finish);
-
-
-   double cpu_usage_seconds = (double)(cpu_usage_finish - cpu_usage_start) / CLOCKS_PER_SEC;
-   double wall_clock_seconds = (wall_clock_finish.tv_sec - wall_clock_start.tv_sec);
-   wall_clock_seconds += (wall_clock_finish.tv_nsec - wall_clock_start.tv_nsec) / 1000000000.0;
+   overall_timer.stop();
    
-   printf("The CPU usage time:   %f seconds\n", cpu_usage_seconds);
-   printf("The wall clock time:  %f seconds\n", wall_clock_seconds);
-   printf("CPU/wall clock ratio: %5.2f\n", cpu_usage_seconds/wall_clock_seconds);
+   printf("The CPU usage time:   %f seconds\n", overall_timer.cpu_time);
+   printf("The wall clock time:  %f seconds\n", overall_timer.wall_time);
+   printf("CPU/wall clock ratio: %5.2f\n", overall_timer.cpu_time/overall_timer.wall_time);
+   cout<<"Date/Time: "<<overall_timer.readable_date_time()<<endl;
 
    return 0;
 }
