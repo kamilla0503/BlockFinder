@@ -34,14 +34,18 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
     }
    //patterns.push_back(generate_patterns(samples ));
    counter.push_back(0); 
-   results_found = 0; 
    max_depth = 0;
-   iterator = 0;
+   
    //code_table.setPatternsCodes(patterns, ncs);
     if (generation) {
         code_table.setPatternsCodes(patterns_listl, ncs);
         cout << "Code Table generated, " << code_table.n_patterns <<
              " patterns, " << code_table.n_simplified << " simplified" << endl;
+  cout<<"List of unique simplified patterns with multiplicities:"<<endl;
+  for(int s=0; s<code_table.n_simplified ; s++){
+    cout<<"   "<<setw(2)<<s<<" "<<code_table.unique_simplified_patterns[s]<<
+      " "<<setw(3)<<code_table.simple_multiplicity[s]<<endl;
+  }
 
     }
     else{
@@ -50,15 +54,15 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
    scheme.setscheme(&code_table,"1", &bncs, samples, {});
    
    out1 = "";
-   start_cpu_time = clock();
-   clock_gettime(CLOCK_MONOTONIC, &start_wall_time);
-   tick_cpu_time = start_cpu_time;
-   tick_wall_time = start_wall_time;
+   count_results.clear();
+   count_try_pattern.clear();
+   count_iterations.clear();
 
 }
 
 
-void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, vector <string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run, cout_locker * cl ) {
+void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode, 
+                    vector<string> &patterns_listl1, vector <int> &patterns1, Task4run & task_for_run, cout_locker *cl) {
 
     BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
     b.cout_lock = cl;
@@ -78,28 +82,22 @@ void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t
 }
 
 
-
-
-
-
-vector<string> BlockFinder::generate_patterns(int  bsamples, bool top ) {
+vector<string> BlockFinder::generate_patterns(int  bsamples, bool top ){
    vector <string> new_set;
    vector <string>  current_set;
    if (bsamples == 0) {
-      new_set = {"" }; //previously "0"
+      new_set = {""}; //previously "0"
       return new_set;
-}
+    }
    
    current_set = generate_patterns(bsamples - 1, false);
    //new_set = { };
    string new_pattern;
    for (string item : current_set) {
-      for (labeltype option : ncs.label_types) {
+      for (labeltype option : ncs.label_types){
          new_pattern = item + option.name;
-         if (top==true ) {
-            if (ncs.check_power(new_pattern, min_depth) ){
-
-
+         if (top==true){
+            if (ncs.check_power(new_pattern, min_depth)){
                new_set.push_back(new_pattern); 
             }
       }
@@ -124,6 +122,7 @@ int index_of_type(labeltype label_type) {
    static map<char, int>  basic_types = { {typeX.name, 0}, { typeN.name,1 } , {typeC.name, 2} , {typeD.name, 3} , {typeA.name, 4} , {typeT.name, 5} ,{ typeS.name, 6}, {typeF.name, 7} };
    return basic_types[label_type.name]; 
 } 
+
 
 void BlockFinder::start_blockfinder() {
    cout_lock->lock();
@@ -155,6 +154,9 @@ void BlockFinder::start_blockfinder() {
    }
    cout_lock->unlock();
 
+   count_results.start();
+   count_try_pattern.start();
+   count_iterations.start();
 }
 
 
@@ -221,23 +223,9 @@ void BlockFinder::maincycle( Task4run & task_for_run   ) {
       check_max_depth();
    }
    cout_lock->lock();
-   cout<< run_name<<" finished task "<<to_string(task_id)<<" after "<<iterator<< " iterations"<<endl;
+   cout<< run_name<<" finished task "<<to_string(task_id)<<" after "<<count_iterations<< " iterations"<<endl;
    cout_lock->unlock();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void BlockFinder::create_tasks() {
@@ -340,11 +328,11 @@ void BlockFinder::create_tasks() {
                     //Task4run task1(counter, {});
                     task1.start=counter;
                     task1.end={};
-		    task1.number = task_number;
-		    task1.update_name();
+        task1.number = task_number;
+        task1.update_name();
 
                     tasks.push_back(task1);
-		    task_number++;
+        task_number++;
 
 
 
@@ -406,12 +394,11 @@ void BlockFinder::create_tasks() {
    //iterlog.close();
    file1.close();
 
-   cout<< "create_tasks: Finished after "<<iterator<< " iterations"<<", "<<tasks.size()<<" tasks generated"<<endl;
+   cout<< "create_tasks: Finished after "<<count_iterations<< " iterations"<<", "<<tasks.size()<<" tasks generated"<<endl;
 }
 
 
-bool BlockFinder::check_counters_reached_the_end_of_task()
-{
+bool BlockFinder::check_counters_reached_the_end_of_task(){
     if(!check_counter_limits)return(false);
     
     bool end_of_task = false;
@@ -431,9 +418,11 @@ bool BlockFinder::check_counters_reached_the_end_of_task()
     return end_of_task;
 }
 
+
 void BlockFinder::recover_from_counters( const Task4run & task_for_recover ){
    recover_from_counters(task_for_recover.start, task_for_recover.number);
 }
+
 
 void BlockFinder::recover_from_counters( const vector <int> & recover_counters, int numbertask){
 
@@ -461,49 +450,29 @@ void BlockFinder::recover_from_counters( const vector <int> & recover_counters, 
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void BlockFinder::next_iteration_output()
-{
+void BlockFinder::next_iteration_output(){
     static const long long LOG_ITERATOR = 1000000; /* Log every one million of iterations */
-    iterator++;
-    if (iterator % LOG_ITERATOR == 0) {
+    count_iterations++;
+    if (count_iterations.counter % LOG_ITERATOR == 0) {
       cout_lock->lock();
       ostringstream log;
       string name;
       log<< run_name;
-      log<< setw(6) << iterator/LOG_ITERATOR<<"M ";
+      log<< setw(6) << count_iterations.counter/LOG_ITERATOR<<"M ";
       //time_t now_cpu_time = clock();
       //double cpu_time_per_log = (double)(now_cpu_time - start_cpu_time) / CLOCKS_PER_SEC;
       
-      struct timespec now_wall_time;
-      clock_gettime(CLOCK_MONOTONIC, &now_wall_time);
-      double wall_time_per_run = (double)(now_wall_time.tv_sec - start_wall_time.tv_sec);
-      log << setw(8) << setprecision(0) << fixed << wall_time_per_run <<" sec ";
+      //struct timespec now_wall_time;
+      //clock_gettime(CLOCK_MONOTONIC, &now_wall_time);
+      //double wall_time_per_run = (double)(now_wall_time.tv_sec - start_wall_time.tv_sec);
+      log << setw(8) << setprecision(0) << fixed << count_iterations.wall_time <<" sec ";
 
-      double tick_time_per_log = (now_wall_time.tv_sec - tick_wall_time.tv_sec);
-      tick_time_per_log += (now_wall_time.tv_nsec - tick_wall_time.tv_nsec) / 1000000000.0;
-      log << setw(7) << setprecision(2) << fixed << (double)(LOG_ITERATOR/tick_time_per_log/1000) << " Kiter/sec";
+      //double tick_time_per_log = (now_wall_time.tv_sec - tick_wall_time.tv_sec);
+      //tick_time_per_log += (now_wall_time.tv_nsec - tick_wall_time.tv_nsec) / 1000000000.0;
+      log << setw(7) << setprecision(2) << fixed << (double)(count_iterations.wall_speed()/1000.) << " Kiter/sec";
 
       log << " max_P=" << setw(2) << setiosflags(ios::left) << max_depth + 1;
-      log << " ELB_found= " << setw(6) << results_found;
+      log << " ELB_found= " << setw(6) << count_results.counter;
       for(int d=0; d< depth && d<13; d++){
       log << " " << setw(3) << setiosflags(ios::right) << counter[d] << "/";
       log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
@@ -512,28 +481,32 @@ void BlockFinder::next_iteration_output()
      
       if(result_ofstream.is_open())result_ofstream.flush();
       //tick_cpu_time = now_cpu_time;
-      tick_wall_time = now_wall_time;
+      //tick_wall_time = now_wall_time;
+      count_iterations.check_point();
       cout_lock->unlock();
 
     }
 }
 
-void BlockFinder::go_parallel() {
+
+void BlockFinder::go_parallel(){
    scheme =back_up_schemes[depth];
    back_up_schemes.pop_back();
    counter[depth] = counter[depth] + 1;
 }
 
-void BlockFinder::check_max_depth() {
-   if (depth > max_depth) {
+
+void BlockFinder::check_max_depth(){
+   if (depth > max_depth){
       max_depth = depth;
 //      out1 = "[BlockFinder" + to_string(samples) + " ] New max depth:" + to_string(max_depth); 
 //      cout<<out1<<endl;
    }
-
 } 
 
-void BlockFinder::get_next_patterns(vector <int> & patterns1, int patterns_left, int  start_point, vector<int> & result_next_patterns) {
+
+void BlockFinder::get_next_patterns(vector <int> & patterns1, int patterns_left, 
+                        int  start_point, vector<int> & result_next_patterns) {
    result_next_patterns = {};
    for (int i = 0; i < patterns_left; i++)  {
       if( scheme.try_pattern(patterns1[i + start_point])) {
@@ -541,17 +514,6 @@ void BlockFinder::get_next_patterns(vector <int> & patterns1, int patterns_left,
       }
    }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 void BlockFinder::go_deeper(vector <int> next_patterns) {
@@ -563,9 +525,11 @@ void BlockFinder::go_deeper(vector <int> next_patterns) {
 
 void BlockFinder:: blockfinder_finished() {
    cout_lock->lock();
-   out1 = "[BlockFinder] finished search in" + to_string(samples) + "samples after " + to_string(iterator) + " iterations " + to_string(results_found) + " ELB schemes found";
+   out1 = "[BlockFinder] finished search in" + to_string(samples) + "samples after " + 
+     to_string(count_iterations.counter) + " iterations " + to_string(count_results.counter) + " ELB schemes found";
    cout_lock->unlock();
 }
+
 
 void BlockFinder::go_back() {
    depth = depth -1;
@@ -579,6 +543,7 @@ void BlockFinder::go_back() {
    back_up_schemes.pop_back();
 
 }
+
 
 void BlockFinder::save_result() {
    vector<int> empty_vec = {};
@@ -608,6 +573,7 @@ void BlockFinder::save_result() {
    }
 }
 
+
 bool BlockFinder::check_have_enought_t_free(const Scheme & scheme, const vector<int> &  patterns_left) {
    tuple <int, int> t;
    vector <int> simplified_scheme;
@@ -630,12 +596,14 @@ bool BlockFinder::check_have_enought_t_free(const Scheme & scheme, const vector<
    return (result); 
 }
 
+
 void PatternsCodes::simplify_list_of_patterns(const vector<int>& list_of_patterns, vector<int>& result) {
    result.assign(n_simplified, 0);
    for (int pattern : list_of_patterns) {
       result[simple_ints[pattern]]++;
    }
 }
+
 
 tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(const vector <int>& arg_simplified, int index_of_type) {
    int count_type = 0;
@@ -659,6 +627,7 @@ tuple<int, int > PatternsCodes::count_type_in_list_of_simplified(const vector <i
 #endif
    return  make_tuple(count_type, count_all - count_type);
 }
+
 
 tuple<int, int > PatternsCodes::count_type_in_list_of_patterns(
     const vector <int>& arg_patterns, int index_of_type) {
@@ -689,9 +658,10 @@ tuple<int, int > PatternsCodes::count_type_in_list_of_patterns(
 
 
 void  BlockFinder::write_result(Scheme_compact  new_scheme) {
-   results_found = results_found + 1;
+//   results_found = results_found + 1;
+   count_results++;
    if(result_ofstream.is_open()){
-      result_ofstream << "# iterator = " + to_string(iterator) << endl;
+      result_ofstream << "# iterator = " <<count_iterations << endl;
       result_ofstream << new_scheme.full_str()<<endl;
       //result_ofstream.flush();
    }

@@ -22,6 +22,9 @@ public:
 	 index of simple_form in unique_simplified_patterns */
     vector <string> unique_simplified_patterns; /* of size n_simplified */
     map <string, int> code_to_number;
+    vector <int>    simple_multiplicity; /* of size n_simplified */
+      /* Number of patterns that are simplified to this simple form
+       * The sum of vector elements is equal to n_patterns */
 
     valarray<bitset<N_LABELTYPES> > have_labeltype_simplified_flag; /* of size n_simplified */
     valarray<bitset<N_LABELTYPES> > have_labeltype_pattern_flag;    /* of size n_patterns */
@@ -42,6 +45,7 @@ public:
     PatternsCodes();
     void setPatternsCodes(vector<string> a_patterns, NCS a_ncs );
     void print_flags();
+    void print_codes(string  file);
     
     void  simplify_list_of_patterns(const vector<int> & list_of_patterns, vector<int> & result);
     tuple<int, int > count_type_in_list_of_simplified(const vector <int> & simplified, int index_of_type);

@@ -1,14 +1,17 @@
+CPP=gcc -E
 CC=gcc
 CXX=g++
 RM=rm -f
 
 
 HOST=$(shell hostname --short)
-CPPFLAGS=-std=c++11 -O3 -I.
-LDFLAGS=-std=c++11 -O3 -pthread
+BRANCH=$(shell git name-rev --name-only HEAD)
+CPPFLAGS= -I. 
+CXXFLAGS= -std=c++11 -O3 
+LDFLAGS= -pthread
 LDLIBS=-lboost_thread -lboost_system -lboost_program_options -lboost_regex
 
-PROGRAM=blockfinder_valarray_${HOST}
+PROGRAM=blockfinder_${BRANCH}_${HOST}
 PROGRAM2=blockfinder
 
 SRCS=ncs.cpp \
@@ -17,28 +20,32 @@ SRCS=ncs.cpp \
      scheme.cpp \
      blockfinder_main.cpp \
      PatternCodes.cpp \
-     tasks.cpp
+     tasks.cpp \
+     speedo.cpp
+
+DEPDIR := .deps
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
+COMPILE.cpp = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c
 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: $(PROGRAM)
 
-ncs.o: ncs.cpp ncs.h
+%.o : %.cpp $(DEPDIR)/%.d | $(DEPDIR)
+	$(COMPILE.cpp) $(OUTPUT_OPTION) $<
 
-nmr.o: nmr.cpp ncs.h 
+(DEPDIR): ; @mkdir -p $@
 
-blockfinder.o: blockfinder.cpp blockfinder.h ncs.h
+DEPFILES := $(SRCS:%.cpp=$(DEPDIR)/%.d)
+$(DEPFILES):
+include $(wildcard $(DEPFILES))
 
-blockfinder_main.o: blockfinder_main.cpp blockfinder.h ncs.h
 
-scheme.o: scheme.cpp scheme.h
 
-PatternCodes.o: PatternCodes.cpp PatternCodes.h
-
-tasks.o: tasks.cpp tasks.h
+counter.o: counter.cpp counter.h
 
 $(PROGRAM): $(OBJS)
-	$(CXX) $(LDFLAGS) $(LDLIBS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) -o $(PROGRAM) $(OBJS) $(LDLIBS)
 	cp $(PROGRAM) $(PROGRAM2)
 
 
@@ -48,4 +55,4 @@ pos_desc_example:
 
 
 clean:
-	rm -rf $(OBJS) $(PROGRAM)
+	rm -rf $(OBJS) $(PROGRAM) $(DEPFILES)

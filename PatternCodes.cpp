@@ -70,6 +70,23 @@ void PatternsCodes::print_flags(){
    }
 }
 
+
+void PatternsCodes::print_codes(string file){
+    ofstream file_with_codes (file);
+    if(file_with_codes.is_open()) {
+       file_with_codes<<"n_patterns=   "<<n_patterns<<endl;
+       file_with_codes<<"n_simplified= "<<n_simplified<<endl;
+       file_with_codes<<"n_codes=      "<<n_codes<<endl;
+       for(int i=0; i<n_patterns; i++){
+	 for(int j=0; j<n_patterns; j++)
+           file_with_codes<<setw(3)<<calc_code_fast(i,j)<<" ";
+         file_with_codes<<endl;
+       }
+    }else{
+       cerr<<"Can't open file "<<file<<" for wrinting codes table"<<endl;
+    }
+}
+
 void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs ) {
 
     patterns=a_patterns;
@@ -89,6 +106,7 @@ void PatternsCodes::create_simplified_table()
     simple_form={};
     unique_simplified_patterns= {};
     simple_ints = {};
+    simple_multiplicity = {};
     map <string, int> simplified_map = {};
     int unique_simple_count = -1; /* will be incremented */
     int pattern_simple_int;
@@ -100,9 +118,11 @@ void PatternsCodes::create_simplified_table()
 	unique_simple_count++;
 	pattern_simple_int = unique_simple_count;
         simplified_map[simple_pattern]=pattern_simple_int;
+	simple_multiplicity.push_back(1);
       }
       else{
 	pattern_simple_int = simplified_map[simple_pattern];
+        simple_multiplicity[pattern_simple_int]++;
       }
       simple_form.push_back(simple_pattern);
       simple_ints.push_back(pattern_simple_int);
