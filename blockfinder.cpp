@@ -154,7 +154,8 @@ void BlockFinder::start_blockfinder() {
 
 
 void BlockFinder::maincycle( Task4run & task_for_run   ) {
-   vector<int> patternscurrent, next_patterns;
+   vector<int> *patterns_current_ptr; 
+   vector <int> next_patterns;
    int start_point;
    int patterns_left; 
    bool flag_t_free;
@@ -174,16 +175,16 @@ void BlockFinder::maincycle( Task4run & task_for_run   ) {
       next_iteration_output();
       //
       // the vector<int>  is copied
-      patternscurrent = patterns[depth];
-      if (depth == 0 && ( (counter[0] + min_depth )> patternscurrent.size())) {
+      patterns_current_ptr = &(patterns[depth]);
+      if (depth == 0 && ( (counter[0] + min_depth )> patterns_current_ptr->size())) {
          break;
       }
       start_point = 1 + counter[depth];
-      patterns_left = patternscurrent.size() - start_point;
+      patterns_left = patterns_current_ptr->size() - start_point;
       //
       // The scheme is copied
       back_up_schemes.push_back(scheme);
-      scheme.add_pattern(patternscurrent[counter[depth]]);
+      scheme.add_pattern((*patterns_current_ptr)[counter[depth]]);
       if (patterns_left < (min_depth - depth - 1)   ) {
          go_back();
          continue;
@@ -195,7 +196,7 @@ void BlockFinder::maincycle( Task4run & task_for_run   ) {
          go_back();
          continue;
       }
-      get_next_patterns(patternscurrent, patterns_left, start_point, next_patterns);
+      get_next_patterns(*patterns_current_ptr, patterns_left, start_point, next_patterns);
       flag_t_free = true;
       if (check_t_free) {
          flag_t_free = check_have_enought_t_free(scheme, next_patterns);
