@@ -24,7 +24,10 @@ class Speedo {
     time_t start_cpu_time, this_cpu_time;
     struct timespec start_wall_time, this_wall_time;
 
+    Speedo();
+    Speedo(unsigned long long cnt, double wall_t, double cpu_t);
     std::string readable_date_time();
+    
     void clear();
     void start();
     void count(int add);
@@ -32,11 +35,13 @@ class Speedo {
 		void check_point();
     void stop();
     void stop(int add);
+    Speedo& operator+=(Speedo const& sadd);
+
 		double cpu_speed();
     double wall_speed();
 		double mean_cpu_speed();
     double mean_wall_speed();
-    Speedo operator+(Speedo const& cadd);
+    Speedo operator+(Speedo const& sadd);
 		void operator++();    /* prefix increment  */
 		void operator++(int); /* postrix increment */
 		explicit operator std::string() const;

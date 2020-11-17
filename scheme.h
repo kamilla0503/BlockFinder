@@ -1,5 +1,9 @@
-#pragma once
-#include"ncs.h"
+
+#ifndef SPEEDO_H_INCLUDED
+#define SPEEDO_H_INCLUDED
+
+#include "ncs.h"
+#include "speedo.h"
 #include <stdexcept>
 #include "PatternCodes.h"
 #include <vector>
@@ -55,6 +59,7 @@ public:
 	void add_new_codes(int new_pattern);
 	void add_pattern(int new_pattern);
 	bool try_pattern(int  new_pattern);
+  bool try_pattern_speedo(int  new_pattern, Speedo & speedo);
 	Scheme direct_product(Scheme scheme);
 	string full_str();
 	void setscheme(PatternsCodes *patternscode, string sname, NCS *sncs, 
@@ -81,3 +86,5 @@ public:
 };
 bool operator==(const Scheme_compact& s1, const Scheme_compact& t2);
 bool operator<(const Scheme_compact& t1, const Scheme_compact& t2);
+
+#endif

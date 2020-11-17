@@ -1,6 +1,17 @@
 
 #include "speedo.h"
 
+Speedo::Speedo():
+  counter(0),last_counter(0),
+  wall_time(0.0), last_wall_time(0.0),
+  cpu_time(0.0), last_cpu_time(0.0)
+{};
+
+Speedo::Speedo(unsigned long long cnt, double wall_t, double cpu_t):
+  counter(cnt),last_counter(cnt),
+  wall_time(wall_t), last_wall_time(wall_t),
+  cpu_time(cpu_t), last_cpu_time(cpu_t)
+{};
 
 void Speedo::clear() {
   counter = 0;
@@ -14,9 +25,7 @@ void Speedo::clear() {
 void Speedo::start() {
   clear();
   start_cpu_time = clock();
-  //last_cpu_time = start_cpu_time;
   clock_gettime(CLOCK_MONOTONIC, &start_wall_time);
-  //last_wall_time = start_wall_time;
 };
 
 std::string Speedo::readable_date_time() {
@@ -77,6 +86,17 @@ double Speedo::mean_cpu_speed() {
 double Speedo::mean_wall_speed(){ 
   return counter/wall_time; 
 };
+    
+Speedo Speedo::operator+(Speedo const& sadd){
+  return Speedo(counter + sadd.counter, wall_time + sadd.wall_time, cpu_time + sadd.cpu_time);
+};
+
+Speedo& Speedo::operator+=(Speedo const& sadd){
+  counter+= sadd.counter;
+  wall_time+= sadd.wall_time;
+  cpu_time+= sadd.cpu_time;
+  return *this;
+};
 
 void Speedo::operator++() {
   ++counter;
@@ -87,7 +107,6 @@ void Speedo::operator++(int) {
 }
 
 Speedo::operator std::string() const {;
-  //std::string ret;
   return std::to_string(counter);
 };
 

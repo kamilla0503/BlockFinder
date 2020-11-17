@@ -53,9 +53,9 @@ public:
   vector <int> counter = {}; //temporary
   vector <Scheme> back_up_schemes = {};
 	
-	Speedo count_results;      /* Number of results found        */
-	Speedo count_try_pattern;  /* Number of calls to try_pattern */
-	Speedo count_iterations;   /* Number of iterations           */
+	Speedo speedo_iterations;   /* Number of iterations           */
+	Speedo speedo_codes;        /* Number of codes checked in try_pattern */
+	Speedo speedo_results;      /* Number of results found        */
 	
   map <unsigned long long, set< Scheme_compact>> result;//soe
   PatternsCodes code_table;
@@ -75,6 +75,8 @@ public:
   bool check_have_enought_t_free(const Scheme & scheme, const vector<int> &patterns_left);
   void write_result(Scheme_compact  new_scheme);
   void get_next_patterns(vector <int> & patterns, int patterns_left, int start_point, 
+                            vector<int> &result);
+  void get_next_patterns_speedo(vector <int> & patterns, int patterns_left, int start_point, 
                             vector<int> &result);
   void go_deeper(vector <int> next_patterns);
   void go_parallel();

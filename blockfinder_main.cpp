@@ -50,6 +50,8 @@ int main(int argc, char *argv[]) {
          ("task-size,t", po::value<int>(&task_size)->default_value(200), "The size of task to be executed in parallel")
          ("restart", po::value<string>(&restart_file), "Restart file with unfinished tasks, e.g. \"restart.txt\". The file is created by python script viewrun.txt")
          ("print-codes", po::value<string>(&print_codes_file), "Print codes to separate file")
+         ("log-speed", po::bool_switch()->default_value(true))
+         ("log-state", po::bool_switch()->default_value(true))
          ("list-ncs", "List all supporten NCS")
       ;
       pos_desc.add("NCS", 1)
@@ -145,7 +147,7 @@ int main(int argc, char *argv[]) {
       auto_min_t_free = 16;
       cout<<"Automatically set min_t_free = 16"<<endl;
    }else{
-      cout<<"Checks of  min_t_free is swithced off"<<endl;
+      cout<<"Checks of min_t_free is swithced off"<<endl;
    }
 
 
@@ -181,7 +183,7 @@ int main(int argc, char *argv[]) {
 	    if(task_number >= b.tasks.size()){
               cerr<<line<<endl;
 	      cerr<<"   Error: task number "<<task_number<<
-		" is out of range: "<<b.tasks.size()<<endl;
+		          " is out of range: "<<b.tasks.size()<<endl;
 	      i++;
 	      continue;
 	    }
@@ -205,7 +207,7 @@ int main(int argc, char *argv[]) {
      }else 
         cout <<" UNABLE TO OPEN FILE "<<restart_file<<endl;
 
-     cout<<"RESTART FILE '"<<restart_file<<"' PARSED, "<<
+        cout<<"RESTART FILE '"<<restart_file<<"' PARSED, "<<
         run_tasks.size()<<" TAKS OF " <<b.tasks.size()<<" ARE READY FOR RESTART"<<endl;
      //exit(1);
    }
@@ -214,13 +216,6 @@ int main(int argc, char *argv[]) {
    ctpl::thread_pool p(ncpu);
 
    ofstream taskfile;
-
-
-   // Initialize timers
-   struct timespec wall_clock_start, wall_clock_finish;
-   clock_t cpu_usage_start, cpu_usage_finish;   
-   cpu_usage_start = clock();
-   clock_gettime(CLOCK_MONOTONIC, &wall_clock_start);
 
 
    cout << endl;
