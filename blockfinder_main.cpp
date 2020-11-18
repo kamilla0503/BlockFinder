@@ -225,7 +225,7 @@ int main(int argc, char *argv[]) {
 
    cout_locker Cout_Lock;
    for (Task4run t : run_tasks){
-      p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_listl, b.patterns[0], t, & Cout_Lock);
+      p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], t, & Cout_Lock);
       numbertask=numbertask+1;
    }
 

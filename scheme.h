@@ -16,7 +16,6 @@ const int Align=32;
 #endif
 * */
 
-typedef valarray<bool> Vbool;
 /*
 class Vbool: public valarray<bool> {
     public:

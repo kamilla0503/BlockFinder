@@ -29,7 +29,7 @@ public:
   Scheme scheme;
   void create_tasks(  );
   vector <vector <int>> patterns;
-  vector <string> patterns_listl;
+  vector <string> patterns_text;
   int depth;
   int max_depth;
   int parallel_depth=1;
@@ -61,7 +61,8 @@ public:
   PatternsCodes code_table;
   int index_of_type_T;
   string out1;
-  vector <string> generate_patterns(int  samples, bool top = true);
+  vector <string> generate_all_text_patterns(int  samples, bool top = true);
+  void generate_initial_patterns();
   void open_files();
   void start_blockfinder();
   void maincycle( Task4run & task_for_run  );
@@ -91,8 +92,8 @@ public:
 
 
 void find_schemes (int id,   int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, 
-                    PatternsCodes &patternscode, vector <string> &patterns_listl, 
-                    vector <int> &patterns, Task4run & task_for_run, cout_locker  *cl);
+                    PatternsCodes &patternscode, vector <string> &patterns_text, 
+                    vector <int> &patterns_ints, Task4run & task_for_run, cout_locker  *cl);
 
 
 void find (const BlockFinder b);
