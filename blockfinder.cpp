@@ -28,7 +28,8 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
    counter.push_back(0); 
 
    if(generation) {
-      generate_initial_patterns();
+      patterns_text = generate_all_text_patterns(samples);
+      generate_initial_patterns(patterns_text);
    }else{
       code_table= patternscode;
    }
@@ -53,21 +54,70 @@ void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t
 }
 
 
-void BlockFinder::generate_initial_patterns(){
+void BlockFinder::generate_initial_patterns(vector<string> &p_text){
   
-   patterns_text = generate_all_text_patterns(samples);
 
-   vector<int> start_patterns;
-   for (int i = 0; i < patterns_text.size(); i++) {
-       start_patterns.push_back(i);
-   };
-   patterns.push_back(start_patterns);
-
+   patterns_text = p_text;
    code_table.setPatternsCodes(patterns_text, ncs);
    cout << "Code Table generated, " << code_table.n_patterns <<
            " patterns, " << code_table.n_simplified << " simplified" << endl;
+   
    cout<<"List of unique simplified patterns with multiplicities:"<<endl;
    code_table.print_simplified_patterns(cout);
+
+   //cout<<"CODES"<<endl;
+   //code_table.print_codes(cout);
+   //cout<<endl;
+   vector<size_t> n_diff_row, n_diff_col, n_compat;
+   cout<<"START THE CODE TABLE DRYING"<<endl;
+   cout<<"Calculate different codes in each row and column"<<endl;
+
+   code_table.count_different_codes_in_vector(code_table.pattern_ints, n_diff_row, n_diff_col);
+   code_table.count_pairwise_compatible(code_table.pattern_ints, n_compat);
+   
+   Vbool n_codes_Ok(false, code_table.n_patterns);
+   Vbool n_compat_Ok(false, code_table.n_patterns);
+   Vbool pattern_Ok(false, code_table.n_patterns);
+
+   vector<string> filtered_patterns_text;
+   int n_filtered = 0;
+   for(int i=0; i<code_table.n_patterns; i++){
+      if( n_diff_row[i]>=min_depth and n_diff_col[i]>= min_depth ){
+         n_codes_Ok[i] = true;
+      }
+      if( n_compat[i]>= min_depth ){
+         n_compat_Ok[i] = true;
+      }
+      if( n_codes_Ok[i] and n_compat_Ok[i]){
+         pattern_Ok[i] = true;
+         filtered_patterns_text.push_back(patterns_text[i]);
+         n_filtered++;
+      }
+   }
+
+   cout<<setw(4)<<"#"<<" "<<setw(code_table.n_samples)<<"PAT"<<" ";
+   cout<<setw(3)<<"GR"<<" "<<setw(4)<<"ROWS"<<" "<<setw(4)<<"COLS"<<" ";
+   cout<<setw(6)<<"Codes?"<<" "<<setw(7)<<"#Compat"<<" "<<setw(7)<<"Compat?"<<" "<<setw(6)<<"Pattern?";
+   cout<<endl;
+   for(int i=0; i<code_table.n_patterns;i++){
+      cout<<setw(4)<<i<<" "<<code_table.patterns[i]<<" "<<setw(3)<<code_table.simple_ints[i]<<" ";
+      cout<<setw(4)<<n_diff_row[i]<<" "<<setw(4)<<n_diff_col[i]<<" ";
+      cout<<setw(6)<<(n_codes_Ok[i]?"Ok":"!!!")<<" ";
+      cout<<setw(7)<<(n_compat[i])<<" ";
+      cout<<setw(7)<<(n_compat_Ok[i]?"Ok":"!!!")<<" ";
+      cout<<setw(6)<<(pattern_Ok[i]?"Ok":"!!!")<<" ";
+      cout<<endl;
+   };
+
+   cout<<"n_filtered = "<<n_filtered<<" n_patterns = "<<code_table.n_patterns<<endl;
+   if(n_filtered < code_table.n_patterns){
+      cout<<endl<<"RECURSIVELY CALL GENERATE_INITIAL_PATTERNS"<<endl<<endl;
+      generate_initial_patterns(filtered_patterns_text);
+   }
+
+   patterns.clear();
+   patterns.push_back(code_table.pattern_ints);
+
 }
 
 
@@ -384,13 +434,13 @@ void BlockFinder::next_iteration_output(){
         log << setw(7) << setprecision(2) << fixed << (double)(speedo_codes.wall_speed()/1000000.)  << " Mcodes/sec";
         log << " max_P=" << setw(2) << setiosflags(ios::left) << max_depth + 1;
         log << " ELB_found= " << setw(6) << speedo_results.counter;
-        /*log << endl;
-        log<< run_name << " Counters: ";
+        //log << endl;
+        log << " Counters: ";
         for(int d=0; d< depth && d<13; d++){
           log << " " << setw(3) << setiosflags(ios::right) << counter[d] << "/";
           log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
-        }
-        */
+        };
+        
       
       cout << log.str() << endl;
      

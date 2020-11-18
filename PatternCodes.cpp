@@ -74,20 +74,32 @@ void PatternsCodes::print_pattern_flags(ostream& out){
       out<<"\'"<<endl;
    }
 };
+
 void PatternsCodes::print_codes(string file){
     ofstream file_with_codes (file);
-    if(file_with_codes.is_open()) {
-       file_with_codes<<"n_patterns=   "<<n_patterns<<endl;
-       file_with_codes<<"n_simplified= "<<n_simplified<<endl;
-       file_with_codes<<"n_codes=      "<<n_codes<<endl;
-       for(int i=0; i<n_patterns; i++){
-    for(int j=0; j<n_patterns; j++)
-           file_with_codes<<setw(3)<<calc_code_fast(i,j)<<" ";
-         file_with_codes<<endl;
-       }
+    if(file_with_codes.is_open()){
+      print_codes(file_with_codes);
     }else{
        cerr<<"Can't open file "<<file<<" for wrinting codes table"<<endl;
     }
+}
+
+void PatternsCodes::print_codes(ostream &out){
+   out<<"n_patterns=   "<<n_patterns<<endl;
+   out<<"n_simplified= "<<n_simplified<<endl;
+   out<<"n_codes=      "<<n_codes<<endl;
+   out<<setw(n_samples)<<" "<<" ";
+   for(int i=0; i<n_patterns; i++){
+     out<<setw(n_samples)<<patterns[i]<<" ";
+   }
+   cout<<endl;
+   for(int i=0; i<n_patterns; i++){
+      out<<setw(3)<<patterns[i]<<" ";
+      for(int j=0; j<n_patterns; j++)
+         out<<setw(n_samples)<<calc_code_fast(i,j)<<" ";
+         out<<endl;
+      }
+   out<<endl;
 };
 
 
@@ -105,8 +117,6 @@ void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs ) {
 
     patterns=a_patterns;
     n_patterns = patterns.size();
-
-    n_patterns = patterns.size();
     if(n_patterns > 0 )
       n_samples = patterns[0].length();
     else
@@ -122,10 +132,18 @@ void PatternsCodes::setPatternsCodes(vector<string> a_patterns, NCS a_ncs ) {
 
 void PatternsCodes::create_simplified_table()
 {
-    simple_form={};
-    unique_simplified_patterns= {};
-    simple_ints = {};
-    simple_multiplicity = {};
+    pattern_ints.clear();
+    simple_form.clear();
+    unique_simplified_patterns.clear();
+    simple_ints.clear();
+    simple_multiplicity.clear();
+    
+    // fill pattern_ints with sequencial numbers, 
+    // the numbers will refer patterns in the 'vector<string> patterns' 
+    for (int i = 0; i < patterns.size(); i++) {
+       pattern_ints.push_back(i);
+    };
+
     map <string, int> simplified_map = {};
     int unique_simple_count = -1; /* will be incremented */
     int pattern_simple_int;
@@ -172,16 +190,16 @@ void PatternsCodes::create_codes_table() {
 }
     
 
-void PatternsCodes::count_different_codes(const vector <int> &  patterns, int p_test, size_t & n_diff_raw, size_t & n_diff_col){
+void PatternsCodes::count_different_codes(const vector <int> &  patterns, int p_test, size_t & n_diff_row, size_t & n_diff_col){
    n_diff_col = 0;
-   n_diff_raw = 0;
-   Vbool codes_raw(false, n_codes);
+   n_diff_row = 0;
+   Vbool codes_row(false, n_codes);
    Vbool codes_col(false, n_codes);
 
    int code = calc_code_fast(p_test, p_test);
-   codes_raw[code] = true; 
+   codes_row[code] = true; 
    codes_col[code] = true; 
-   n_diff_raw++;
+   n_diff_row++;
    n_diff_col++;
 
    for(int p : patterns){
@@ -189,9 +207,9 @@ void PatternsCodes::count_different_codes(const vector <int> &  patterns, int p_
       if(p == p_test)
          continue;
       code = calc_code_fast(p, p_test);
-      if(not codes_raw[code]){
-         codes_raw[code] = true; 
-         n_diff_raw++;
+      if(not codes_row[code]){
+         codes_row[code] = true; 
+         n_diff_row++;
       }
       code = calc_code_fast(p_test, p);
       if(not codes_col[code]){
@@ -202,15 +220,47 @@ void PatternsCodes::count_different_codes(const vector <int> &  patterns, int p_
 };
 
 
-
 void PatternsCodes::count_different_codes_in_vector(const vector <int> &  patterns, 
-    vector <size_t> &n_diff_raw, vector <size_t> &n_diff_col){
+    vector <size_t> &n_diff_row, vector <size_t> &n_diff_col){
 
-   n_diff_raw.assign(patterns.size(), 0);
+   n_diff_row.assign(patterns.size(), 0);
    n_diff_col.assign(patterns.size(), 0);
    int i=0;
    for(int p : patterns){
-      count_different_codes(patterns, p, n_diff_raw[i], n_diff_col[i]);
+      count_different_codes(patterns, p, n_diff_row[i], n_diff_col[i]);
       i++;
    }
 };
+
+
+void PatternsCodes::count_pairwise_compatible(const vector <int> &  patterns, int p1, size_t & n_compat, Vbool & compat){
+   n_compat = 1; // all patterns are self-compatible
+   compat.resize(patterns.size());
+   compat = false;
+   int i=0;
+   int c11, c12, c21, c22;
+   c11=calc_code_fast(p1, p1);
+   for(int p2 : patterns){
+     c12 = calc_code_fast(p1, p2);
+     c21 = calc_code_fast(p2, p1);
+     c22 = calc_code_fast(p2, p2);
+     if (c11 != c12 and c11 != c21 and c11 != c22 and 
+         c12 != c21 and c12 != c22 and c21 != c22 ){
+         compat[i] = true;
+         n_compat++;
+     }
+     i++;
+   }
+}; 
+
+
+void PatternsCodes::count_pairwise_compatible(const vector <int> & patterns, vector< size_t> & n_compat){
+   n_compat.assign(patterns.size(), 0);
+   Vbool compat_flag_vec;
+   int i=0;
+   for(int p1 : patterns){
+      count_pairwise_compatible(patterns, p1, n_compat[i], compat_flag_vec);
+      i++;
+   }
+}
+
