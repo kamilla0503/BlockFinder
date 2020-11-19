@@ -1,4 +1,6 @@
-#include"blockfinder.h"
+
+#include "blockfinder.h"
+#include "sort_permutation.h"
 
 //#define DEBUG false
 
@@ -70,10 +72,22 @@ void BlockFinder::generate_initial_patterns(vector<string> &p_text){
    //cout<<endl;
    vector<size_t> n_diff_row, n_diff_col, n_compat;
    cout<<"START THE CODE TABLE DRYING"<<endl;
-   cout<<"Calculate different codes in each row and column"<<endl;
-
+   cout<<"Calculate different codes in each row and column (ROWS and COLS below)"<<endl;
    code_table.count_different_codes_in_vector(code_table.pattern_ints, n_diff_row, n_diff_col);
+
+   cout<<"Calculate number of campatible patterns for each pattern using pairwise checking (#Compat)"<<endl;
    code_table.count_pairwise_compatible(code_table.pattern_ints, n_compat);
+
+   cout<<"Sorting all patterns by #Compat"<<endl;
+   vector<size_t> p(n_compat.size());
+   iota(p.begin(), p.end(), 0);
+   sort(p.begin(), p.end(), [&n_compat](const size_t a, const size_t b){ return (n_compat[a] < n_compat[b]) ; } );
+//   auto p  = sort_permutation(n_compat, [&n_compat](const size_t &a, const size_t &b){ return (n_compat[a] > n_compat[b]); } );
+
+   apply_permutation_in_place(patterns_text, p);
+   apply_permutation_in_place(n_diff_row, p);
+   apply_permutation_in_place(n_diff_col, p);
+   apply_permutation_in_place(n_compat, p);
    
    Vbool n_codes_Ok(false, code_table.n_patterns);
    Vbool n_compat_Ok(false, code_table.n_patterns);
@@ -109,10 +123,14 @@ void BlockFinder::generate_initial_patterns(vector<string> &p_text){
       cout<<endl;
    };
 
-   cout<<"n_filtered = "<<n_filtered<<" n_patterns = "<<code_table.n_patterns<<endl;
+   cout<<"n_filtered = "<<n_filtered<<", n_patterns = "<<code_table.n_patterns<<endl;
    if(n_filtered < code_table.n_patterns){
       cout<<endl<<"RECURSIVELY CALL GENERATE_INITIAL_PATTERNS"<<endl<<endl;
       generate_initial_patterns(filtered_patterns_text);
+   }else{
+      code_table.setPatternsCodes(patterns_text, ncs);
+      cout << "Sorted code table is generated, " << code_table.n_patterns <<
+           " patterns, " << code_table.n_simplified << " simplified" << endl;
    }
 
    patterns.clear();
