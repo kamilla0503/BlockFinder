@@ -56,6 +56,17 @@ void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t
     b.maincycle(task_for_run);
 }
 
+void find_schemes (   int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, PatternsCodes &patternscode,
+                    vector<string> &patterns_text, vector <int> &patterns_ints, Task4run & task_for_run, cout_locker *cl) {
+
+    BlockFinder b (bsamples, bncs, bmin_depth, bmin_t_free, patternscode, false )   ;
+    b.cout_lock = cl;
+    b.patterns_text=patterns_text;
+    b.patterns.push_back(patterns_ints);
+    b.recover_from_counters(task_for_run);
+    b.maincycle(task_for_run);
+}
+
 
 void BlockFinder::generate_initial_patterns(vector<string> &p_text){
   

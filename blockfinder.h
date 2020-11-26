@@ -95,6 +95,10 @@ void find_schemes (int id,   int bsamples, NCS &bncs, int bmin_depth, int bmin_t
                     PatternsCodes &patternscode, vector <string> &patterns_text, 
                     vector <int> &patterns_ints, Task4run & task_for_run, cout_locker  *cl);
 
+/*void find_schemes (  int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free,
+                   PatternsCodes &patternscode, vector <string> &patterns_text,
+                   vector <int> &patterns_ints, Task4run & task_for_run, cout_locker  *cl);*/
+
 
 void find (const BlockFinder b);
 

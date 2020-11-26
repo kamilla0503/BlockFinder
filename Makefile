@@ -1,6 +1,6 @@
 CPP=gcc -E
 CC=gcc
-CXX=g++
+CXX=mpicxx
 RM=rm -f
 
 
@@ -51,8 +51,8 @@ $(PROGRAM): $(OBJS)
 
 
 pos_desc_example:
-	g++ -std=c++11 -c pos_desc_example.cpp
-	g++ -std=c++11 -lboost_program_options -o pos_desc_example pos_desc_example.o
+	mpicxx -std=c++11 -c pos_desc_example.cpp
+	mpicxx -std=c++11 -lboost_program_options -o pos_desc_example pos_desc_example.o
 
 
 clean:

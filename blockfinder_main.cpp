@@ -1,3 +1,5 @@
+#include <mpi.h>
+
 #include<pthread.h>
 //temporary
 #include<time.h>
@@ -220,30 +222,70 @@ int main(int argc, char *argv[]) {
    }
 
 
-   ctpl::thread_pool p(ncpu);
+   //ctpl::thread_pool p(ncpu);
 
-   ofstream taskfile;
+   //ofstream taskfile;
 
    cout << endl;
-   int numbertask=0;
+   //int numbertask=0;
    // std::future<void> qw = p.push(find_schemes,
-   cout<<"RUNNING ALL "<<to_string(run_tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
+   //cout<<"RUNNING ALL "<<to_string(run_tasks.size())<<" IN PARALLEL ON "<<to_string(p.size())<<" THREADS"<<endl;
 
    cout_locker Cout_Lock;
-   for (Task4run t : run_tasks){
-      p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], t, & Cout_Lock);
-      numbertask=numbertask+1;
-   }
 
+    int  rank, numprocs, provided;
+    int ierr = MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE,
+             &provided);
+            //MPI_THREAD_MULTIPLE//MPI_Init(&argc, &argv);
+
+
+    ierr = MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+
+
+    ierr = MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+
+
+    cout<<"RUNNING ALL "<<to_string(run_tasks.size())<<" IN PARALLEL ON "<<to_string(numprocs)<<" THREADS"<<endl;
+
+    int n = run_tasks.size();
+    unsigned int partition = n / numprocs;
+
+   //for (Task4run t : run_tasks){
+      //p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], t, & Cout_Lock);
+      //numbertask=numbertask+1;
+   //}
+    ctpl::thread_pool p(provided);
+
+    for ( int i = 0; i < n; i++ )
+    {
+        if (i% numprocs != rank) continue;
+
+        p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], run_tasks[i], &Cout_Lock);
+        //p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], run_tasks[i], &Cout_Lock);
+        //find_schemes(samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], run_tasks[i], &Cout_Lock);
+
+
+    }
+
+
+/*    for ( int i = rank*partition; i <= rank*partition+partition; i++ )
+    {
+        a.do_something()
+    }*/
    // Wait for all jobs to finish
    p.stop(true);
-   cout<<"EXECUTION OF ALL "<<to_string(numbertask)<<" TASKS FINISHED"<<endl;
-   overall_timer.stop();
-   
-   printf("The CPU usage time:   %f seconds\n", overall_timer.cpu_time);
-   printf("The wall clock time:  %f seconds\n", overall_timer.wall_time);
-   printf("CPU/wall clock ratio: %5.2f\n", overall_timer.cpu_time/overall_timer.wall_time);
-   cout<<"Date/Time: "<<overall_timer.readable_date_time()<<endl;
 
+   MPI_Finalize();
+
+   if (rank==0) {
+       cout << "EXECUTION OF ALL " << to_string(n) << " TASKS FINISHED" << endl;
+       overall_timer.stop();
+
+       printf("The CPU usage time:   %f seconds\n", overall_timer.cpu_time);
+       printf("The wall clock time:  %f seconds\n", overall_timer.wall_time);
+       printf("CPU/wall clock ratio: %5.2f\n", overall_timer.cpu_time / overall_timer.wall_time);
+       cout << "Date/Time: " << overall_timer.readable_date_time() << endl;
+   }
    return 0;
 }
