@@ -27,6 +27,7 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
    if (min_depth <= 1) {
       min_depth = 2;
    }
+   counter.clear();
    counter.push_back(0); 
 
    if(generation) {
@@ -60,6 +61,7 @@ void BlockFinder::generate_initial_patterns(vector<string> &p_text){
   
    patterns_text = p_text;
    code_table.setPatternsCodes(p_text, ncs);
+   patterns.clear();
    patterns.push_back(code_table.pattern_ints);
    
    cout << "Code Table generated, " << code_table.n_patterns <<
