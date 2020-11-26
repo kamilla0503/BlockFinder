@@ -62,7 +62,7 @@ public:
   int index_of_type_T;
   string out1;
   vector <string> generate_all_text_patterns(int  samples, bool top = true);
-  void generate_initial_patterns();
+  void generate_initial_patterns(vector<string> & p_text);
   void open_files();
   void start_blockfinder();
   void maincycle( Task4run & task_for_run  );

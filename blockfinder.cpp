@@ -1,4 +1,6 @@
-#include"blockfinder.h"
+
+#include "blockfinder.h"
+#include "sort_permutation.h"
 
 //#define DEBUG false
 
@@ -28,7 +30,8 @@ BlockFinder::BlockFinder( int bsamples, NCS &bncs, int bmin_depth, int bmin_t_fr
    counter.push_back(0); 
 
    if(generation) {
-      generate_initial_patterns();
+      patterns_text = generate_all_text_patterns(samples);
+      generate_initial_patterns(patterns_text);
    }else{
       code_table= patternscode;
    }
@@ -53,22 +56,19 @@ void find_schemes ( int id,  int bsamples, NCS &bncs, int bmin_depth, int bmin_t
 }
 
 
-void BlockFinder::generate_initial_patterns(){
+void BlockFinder::generate_initial_patterns(vector<string> &p_text){
   
-   patterns_text = generate_all_text_patterns(samples);
-
-   //vector<int> start_patterns;
-   //for (int i = 0; i < patterns_text.size(); i++) {
-   //    start_patterns.push_back(i);
-   //};
-
-   code_table.setPatternsCodes(patterns_text, ncs);
+   patterns_text = p_text;
+   code_table.setPatternsCodes(p_text, ncs);
    patterns.push_back(code_table.pattern_ints);
+   
    cout << "Code Table generated, " << code_table.n_patterns <<
            " patterns, " << code_table.n_simplified << " simplified" << endl;
    cout<<"List of unique simplified patterns with multiplicities:"<<endl;
    code_table.print_simplified_patterns(cout);
 }
+
+
 
 
 vector<string> BlockFinder::generate_all_text_patterns(int  bsamples, bool top ){
@@ -384,13 +384,13 @@ void BlockFinder::next_iteration_output(){
         log << setw(7) << setprecision(2) << fixed << (double)(speedo_codes.wall_speed()/1000000.)  << " Mcodes/sec";
         log << " max_P=" << setw(2) << setiosflags(ios::left) << max_depth + 1;
         log << " ELB_found= " << setw(6) << speedo_results.counter;
-        /*log << endl;
-        log<< run_name << " Counters: ";
+        //log << endl;
+        log << " Counters: ";
         for(int d=0; d< depth && d<13; d++){
           log << " " << setw(3) << setiosflags(ios::right) << counter[d] << "/";
           log        << setw(3) << setiosflags(ios::left) << patterns[d].size() - min_depth + 1 + d;
-        }
-        */
+        };
+        
       
       cout << log.str() << endl;
      
@@ -475,7 +475,13 @@ void BlockFinder::save_result() {
    vector<int> empty_vec = {};
    if (check_t_free && !(check_have_enought_t_free(scheme, empty_vec))) {
       return; 
-   }
+   };
+   if( not scheme.check_codes()){
+      cout_lock->lock();
+      cerr<<"check_codes failed for the scheme found!"<<endl;
+      cerr<<scheme.full_str();
+      cout_lock->unlock();
+   };
    int depth_of_scheme;
    depth_of_scheme= scheme.patterns.size();
    Scheme_compact new_scheme;

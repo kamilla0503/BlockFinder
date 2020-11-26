@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
    bool   restart_flag;
    string print_codes_file;
    bool   print_codes_flag;
+   bool   dry_run_flag;
    NCS ncs;
    int samples, min_depth, parallel_depth, task_size;
    int auto_min_t_free = -1;
@@ -50,8 +51,9 @@ int main(int argc, char *argv[]) {
          ("task-size,t", po::value<int>(&task_size)->default_value(200), "The size of task to be executed in parallel")
          ("restart", po::value<string>(&restart_file), "Restart file with unfinished tasks, e.g. \"restart.txt\". The file is created by python script viewrun.txt")
          ("print-codes", po::value<string>(&print_codes_file), "Print codes to separate file")
-         ("log-speed", po::bool_switch()->default_value(true))
-         ("log-state", po::bool_switch()->default_value(true))
+         ("log-speed", po::bool_switch())
+         ("log-state", po::bool_switch())
+         ("dry-run", po::bool_switch(&dry_run_flag),"Make all preparations, do not start BlocFinder for actual calculations")
          ("list-ncs", "List all supporten NCS")
       ;
       pos_desc.add("NCS", 1)
@@ -212,11 +214,15 @@ int main(int argc, char *argv[]) {
      //exit(1);
    }
 
+   if(dry_run_flag){
+     cout<<"--dry-run option is given, exiting"<<endl;
+     exit(0);
+   }
+
 
    ctpl::thread_pool p(ncpu);
 
    ofstream taskfile;
-
 
    cout << endl;
    int numbertask=0;
@@ -228,7 +234,6 @@ int main(int argc, char *argv[]) {
       p.push(find_schemes, samples, ncs, min_depth, auto_min_t_free, b.code_table, b.patterns_text, b.patterns[0], t, & Cout_Lock);
       numbertask=numbertask+1;
    }
-
 
    // Wait for all jobs to finish
    p.stop(true);
