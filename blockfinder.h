@@ -29,7 +29,7 @@ public:
   Scheme scheme;
   void create_tasks(  );
   vector <vector <int>> patterns;
-  vector <string> patterns_listl;
+  vector <string> patterns_text;
   int depth;
   int max_depth;
   int parallel_depth=1;
@@ -53,15 +53,16 @@ public:
   vector <int> counter = {}; //temporary
   vector <Scheme> back_up_schemes = {};
 	
-	Speedo count_results;      /* Number of results found        */
-	Speedo count_try_pattern;  /* Number of calls to try_pattern */
-	Speedo count_iterations;   /* Number of iterations           */
+	Speedo speedo_iterations;   /* Number of iterations           */
+	Speedo speedo_codes;        /* Number of codes checked in try_pattern */
+	Speedo speedo_results;      /* Number of results found        */
 	
   map <unsigned long long, set< Scheme_compact>> result;//soe
   PatternsCodes code_table;
   int index_of_type_T;
   string out1;
-  vector <string> generate_patterns(int  samples, bool top = true);
+  vector <string> generate_all_text_patterns(int  samples, bool top = true);
+  void generate_initial_patterns(vector<string> & p_text);
   void open_files();
   void start_blockfinder();
   void maincycle( Task4run & task_for_run  );
@@ -76,6 +77,8 @@ public:
   void write_result(Scheme_compact  new_scheme);
   void get_next_patterns(vector <int> & patterns, int patterns_left, int start_point, 
                             vector<int> &result);
+  void get_next_patterns_speedo(vector <int> & patterns, int patterns_left, int start_point, 
+                            vector<int> &result);
   void go_deeper(vector <int> next_patterns);
   void go_parallel();
   void check_max_depth();
@@ -89,8 +92,8 @@ public:
 
 
 void find_schemes (int id,   int bsamples, NCS &bncs, int bmin_depth, int bmin_t_free, 
-                    PatternsCodes &patternscode, vector <string> &patterns_listl, 
-                    vector <int> &patterns, Task4run & task_for_run, cout_locker  *cl);
+                    PatternsCodes &patternscode, vector <string> &patterns_text, 
+                    vector <int> &patterns_ints, Task4run & task_for_run, cout_locker  *cl);
 
 
 void find (const BlockFinder b);

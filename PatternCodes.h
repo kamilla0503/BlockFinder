@@ -2,22 +2,26 @@
 // Created by kamilla on 06.03.19.
 //
 
-#ifndef FORWORK_PATTERNCODES_H
-#define FORWORK_PATTERNCODES_H
+#ifndef PATTERNCODES_H_INCLUDED
+#define PATTERNCODES_H_INCLUDED
 #include"ncs.h"
 
+typedef valarray<bool> Vbool;
 
 class PatternsCodes{
 public:
     vector <string> patterns;
     NCS ncs;
+    int           n_samples;      /* number of samples */
     unsigned long n_patterns;     /* number of patterns */
     unsigned long n_simplified;   /* number of unique simplified patterns */
     unsigned long n_codes;        /* number of different codes in table */
 
-    valarray <int>  codes; /* of size n_patterns * n_patterns */
+    valarray <int>  codes;        /* of size n_patterns * n_patterns */
     vector <string> codes_list;  
     vector <string> simple_form;  /* of size n_patterns */
+    vector <string> simple_label; /* of size n_simplified */
+    vector <int>    pattern_ints; /* of size n_patterns, actually 0, 1, 2, .... n_patterns -1 */
     vector <int>    simple_ints;  /* of size n_patterns, 
 	 index of simple_form in unique_simplified_patterns */
     vector <string> unique_simplified_patterns; /* of size n_simplified */
@@ -44,28 +48,34 @@ public:
     PatternsCodes( vector<string> a_patterns, NCS ncs );
     PatternsCodes();
     void setPatternsCodes(vector<string> a_patterns, NCS a_ncs );
-    void print_flags();
-    void print_codes(string  file);
+    void print_pattern_flags(ostream &out);
+    void print_codes(string file);
+    void print_codes(ostream &out);
+    void print_simplified_patterns(ostream &out);
     
     void  simplify_list_of_patterns(const vector<int> & list_of_patterns, vector<int> & result);
     tuple<int, int > count_type_in_list_of_simplified(const vector <int> & simplified, int index_of_type);
-    tuple<int, int > count_type_in_list_of_patterns(const vector <int> &  patterns, int index_of_typr);
+    tuple<int, int > count_type_in_list_of_patterns(const vector <int> &  patterns, int index_of_type);
+
+    void count_different_codes(const vector <int> &  patterns, int p, size_t & n_diff_raw, size_t & n_diff_col);
+    void count_different_codes_in_vector(const vector <int> &  patterns, vector <size_t> &n_diff_raw, vector <size_t> &n_diff_col);
+    void count_pairwise_compatible(const vector <int> & patterns, int p, size_t & n_compat, Vbool & compat);
+    void count_pairwise_compatible(const vector <int> & patterns, vector< size_t> & n_compat);
+    
 private:
     void create_simplified_table();
     void create_labeltype_flags();
     void create_codes_table();
-
-
-
 };
 
 
 
 bool pattern_bigger(string pattern1, string  pattern2);
+
 string simplify_pattern(string pattern);
 
 
 
 
 
-#endif //FORWORK_PATTERNCODES_H
+#endif // PATTERNCODES_H_INCLUDED

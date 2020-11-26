@@ -145,6 +145,19 @@ void Scheme::add_pattern(int new_pattern) {
     simplify();
 }
 
+bool Scheme::try_pattern_speedo(int  new_pattern, Speedo & speedo) {
+  // This function have an unaceptable overhead
+  // It slows the calculations ~10x times
+  // Use try_pattern instead
+  Speedo local_speedo;
+  bool ret;
+  local_speedo.start();
+  ret = try_pattern(new_pattern);
+  local_speedo.stop();
+  local_speedo.count(2*patterns.size()+1);
+  speedo+= local_speedo;
+  return ret;
+}
 
 bool Scheme::try_pattern(int  new_pattern) {
     if (good == false) {
