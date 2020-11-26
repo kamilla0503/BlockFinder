@@ -57,13 +57,13 @@ void BlockFinder::generate_initial_patterns(){
   
    patterns_text = generate_all_text_patterns(samples);
 
-   vector<int> start_patterns;
-   for (int i = 0; i < patterns_text.size(); i++) {
-       start_patterns.push_back(i);
-   };
-   patterns.push_back(start_patterns);
+   //vector<int> start_patterns;
+   //for (int i = 0; i < patterns_text.size(); i++) {
+   //    start_patterns.push_back(i);
+   //};
 
    code_table.setPatternsCodes(patterns_text, ncs);
+   patterns.push_back(code_table.pattern_ints);
    cout << "Code Table generated, " << code_table.n_patterns <<
            " patterns, " << code_table.n_simplified << " simplified" << endl;
    cout<<"List of unique simplified patterns with multiplicities:"<<endl;
